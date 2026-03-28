@@ -1,0 +1,5 @@
+id: continue-screen-zen
+game: arcade-demo
+type: skill
+name: Дзен экрана продолжения
+summary: Пассивно снижает панику при надписи «Game Over» на долю секунды.
