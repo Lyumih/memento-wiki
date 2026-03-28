@@ -33,7 +33,7 @@ npm run build
 
 Frontmatter статей: `title`, `audience` (`players` \| `dev` \| `both`), опционально `order`, `game`. Файл `index.mdx` в подпапке даёт URL каталога без суффикса `/index`.
 
-В MDX доступны виджеты `<RollLevelDemo />` и `<PercentTokenDemo />` (импорт из `@/widgets/...` при необходимости).
+В MDX доступны виджеты `<RollLevelDemo />`, `<PercentTokenDemo />` и `<MermaidDiagram definition={...} />` (через `MdxShell` или импорт из `@/widgets/...` при необходимости).
 
 ## Деплой (SPA)
 
