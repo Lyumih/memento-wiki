@@ -4,9 +4,9 @@
 
 **Goal:** Реализовать полную главную страницу по спеке `docs/superpowers/specs/2026-03-28-memento-homepage-content-design.md`: русский текст (секции 3.1–3.6), диаграмма через именованный компонент + `mermaid`, блок «под капотом» со свёрткой и демо `RollLevelDemo` / `PercentTokenDemo`, навигационные ссылки без 404.
 
-**Architecture:** Исходник диаграммы — **отдельный TS-модуль со строкой** (удобно править и тестировать; в MDX нет fenced `mermaid`). Виджет **`MermaidDiagram`** в `src/widgets/` инициализирует `mermaid` один раз и рендерит SVG в контейнер (API `mermaid` v10+: `initialize` + `run` или `render` — выбрать стабильный для установленной версии). Все MDX-страницы уже оборачиваются в **`MdxShell`** (`src/app/router.tsx`), где зарегистрированы демо — главная получит те же компоненты; добавить **`MermaidDiagram`** в `components` провайдера. Секция «под капотом»: **`Collapse`** из Ant Design, импорт в `content/index.mdx` (не отдельный парсер; это обычный React в MDX).
+**Architecture:** Исходник диаграммы — **отдельный TS-модуль со строкой** (удобно править и тестировать; в MDX нет fenced `mermaid`). Виджет **`MermaidDiagram`** в `src/widgets/` инициализирует `mermaid` и рендерит SVG в контейнер (после `npm install mermaid` зафиксировать **мажорную версию** пакета и использовать актуальный API: `initialize` + `run` и/или `render` — см. комментарий в Task 2). Лендинг MDX рендерится внутри **`MdxShell`** из `src/mdx/MdxShell.tsx`; подключение обёртки — в **`src/app/router.tsx`** (`<MdxShell><Page /></MdxShell>`). Глобальная регистрация виджетов через **`MDXProvider`** в `MdxShell` соответствует духу родительской спеки §5 (именованные компоненты в MDX, как `RollLevelDemo` / `PercentTokenDemo`); отдельный fenced-синтаксис не вводится. Добавить **`MermaidDiagram`** в объект `components` провайдера. Секция «под капотом»: **`Collapse`** из Ant Design, импорт в `content/index.mdx`.
 
-**Tech Stack:** Vite 8, React 19, MDX (`@mdx-js/rollup`), Ant Design 6, TypeScript strict, Vitest; новая зависимость **`mermaid`**.
+**Tech Stack:** Vite 8, React 19, MDX (`@mdx-js/rollup`), Ant Design 6, TypeScript strict, Vitest; **`mermaid`**; для теста виджета — **`@testing-library/react`**, среда **`jsdom`** (пакет `jsdom` как devDependency, если Vitest его требует для `environment: 'jsdom'`).
 
 **Спека:** `docs/superpowers/specs/2026-03-28-memento-homepage-content-design.md`  
 **Родительская вики:** `docs/superpowers/specs/2026-03-28-memento-wiki-design.md` (§5 — только именованные компоненты, без fenced-языка для диаграмм).
@@ -17,7 +17,8 @@
 
 | Файл | Роль |
 |------|------|
-| `package.json` / lock | Зависимость `mermaid`. |
+| `package.json` / lock | Зависимости: `mermaid`; dev: `@testing-library/react`, при необходимости `jsdom`. |
+| `vitest.config.ts` | Включить `src/widgets/**/*.test.tsx` и среду `jsdom` (или отдельный `test.project` для виджетов), не ломая тесты `src/memento/**/*.test.ts`. |
 | `src/diagrams/mementoSystemMap.ts` | Экспорт константы `mementoSystemMapMermaid: string` (текст диаграммы Mermaid: три оси + цикл забег → исход → мета). |
 | `src/widgets/MermaidDiagram.tsx` | Проп `definition: string`; `useId` + контейнер; эффект вызова Mermaid; обработка размонтирования/повторного рендера. |
 | `src/widgets/MermaidDiagram.test.tsx` | Мок `mermaid`; проверка, что виджет монтируется и вызывает API (см. задачу 2). |
@@ -28,24 +29,52 @@
 
 ---
 
-### Task 1: Зависимость `mermaid`
+### Task 1: Зависимости (`mermaid`, тестовый стек)
 
 **Files:**
 - Modify: `package.json`, `package-lock.json`
 
-- [ ] **Step 1:** Установить пакет.
+- [ ] **Step 1:** Установить runtime и dev-зависимости.
 
 ```bash
-cd c:/sites/gen-memento-docs && npm install mermaid
+cd c:/sites/gen-memento-docs && npm install mermaid && npm install -D @testing-library/react jsdom
 ```
 
-Ожидается: запись в `package.json` / lock без ошибок.
+(`jsdom` нужен для `environment: 'jsdom'` в Vitest при тестах React-компонентов.)
 
-- [ ] **Step 2:** Коммит.
+- [ ] **Step 2:** Записать в комментарий к Task 2 или в `MermaidDiagram.tsx` одну строку: **версия `mermaid` из `package.json`** после установки — чтобы моки и вызовы API не расходились с мажором.
+
+- [ ] **Step 3:** Коммит.
 
 ```bash
 git add package.json package-lock.json
-git commit -m "chore: add mermaid for homepage diagram widget"
+git commit -m "chore: add mermaid and RTL/jsdom for widget tests"
+```
+
+---
+
+### Task 1b: Конфигурация Vitest для виджетов
+
+**Files:**
+- Modify: `vitest.config.ts`
+
+- [ ] **Step 1:** Расширить конфиг так, чтобы **`src/widgets/**/*.test.tsx`** выполнялись в **`jsdom`**, а тесты **`src/memento/**/*.test.ts`** оставались в **`node`** (рекомендуется **`test.projects`** в одном `vitest.config.ts`: проект `memento` с `include: ['src/memento/**/*.test.ts']`, `environment: 'node'`; проект `widgets` с `include: ['src/widgets/**/*.test.{ts,tsx}']`, `environment: 'jsdom'`). Если `projects` неудобен в текущей версии Vitest — допустимо **единое** `environment: 'jsdom'` и `include: ['src/**/*.test.ts', 'src/**/*.test.tsx']`, пока тесты memento остаются чистыми функциями без Node-only API.
+
+- [ ] **Step 2:** Установить **`passWithNoTests: false`** на уровне, где это не сломает CI, **или** убедиться, что после добавления виджет-теста `npm run test` реально выполняет ≥1 тест в проекте `widgets` (не «успех без тестов»).
+
+- [ ] **Step 3:** Проверка.
+
+```bash
+npm run test
+```
+
+Ожидается: по-прежнему проходят тесты `src/memento/`; новых падений нет.
+
+- [ ] **Step 4:** Коммит.
+
+```bash
+git add vitest.config.ts
+git commit -m "chore: vitest jsdom project for widget tests"
 ```
 
 ---
@@ -97,6 +126,8 @@ npm run test -- src/widgets/MermaidDiagram.test.tsx
 npm run test -- src/widgets/MermaidDiagram.test.tsx
 ```
 
+Убедиться, что команда **не** завершается с «No test files found» (иначе Task 1b не выполнен).
+
 - [ ] **Step 5:** Коммит.
 
 ```bash
@@ -129,14 +160,14 @@ git commit -m "feat: mermaid source for Memento Mori system map"
 
 - [ ] **Step 1:** Импортировать `MermaidDiagram`, добавить в объект `components` как `MermaidDiagram`.
 
-- [ ] **Step 2:** Сборка и тесты.
+- [ ] **Step 2:** Сборка и **полный** прогон тестов.
 
 ```bash
 npm run test
 npm run build
 ```
 
-Ожидается: успех, без ошибок TypeScript.
+Ожидается: успех; вывод Vitest содержит прогон **`MermaidDiagram`** (имя файла или теста), не только `src/memento/`.
 
 - [ ] **Step 3:** Коммит.
 
@@ -167,9 +198,9 @@ import { Collapse } from 'antd'
 
 - [ ] **Step 4:** Вставить `<MermaidDiagram definition={mementoSystemMapMermaid} />` и подпись под диаграммой (про отличия в играх и про Gen).
 
-- [ ] **Step 5:** Секция **3.5**: заголовок; краткий текст; `Collapse` с панелью «Показать расчёт (Gen)» (или эквивалент), внутри `<RollLevelDemo />` и `<PercentTokenDemo />`; ссылка на Markdown/React Router ссылку на `/dev/memento-roll`. В MDX для клиентской навигации предпочтительно `Link` из `react-router-dom` — если в проекте ещё нет обёртки, допустим `<a href="/dev/memento-roll">` для SPA (полная перезагрузка); **лучше** добавить импорт `Link` в `index.mdx` при поддержке сборкой.
+- [ ] **Step 5:** Секция **3.5**: заголовок; краткий текст; `Collapse` с панелью «Показать расчёт (Gen)» (или эквивалент), внутри `<RollLevelDemo />` и `<PercentTokenDemo />`. Ссылку «полное описание для разработчиков» оформить как **markdown-ссылку** `[текст](/dev/memento-roll)`, чтобы **`scripts/lib/checkLinks.mjs`** (регуляр `](/path)`) увидела URL. Примечание: `checkLinks` **не** сканирует `href=` / `to=` в JSX; при использовании `<Link>` или `<a>` внутренние URL **не** попадут в автоматическую проверку — тогда добавить ручную проверку в «Проверка вручную».
 
-- [ ] **Step 6:** Секция **3.6**: список ссылок — `/dev/memento-roll`, `/games/gen`, `/db/items`, `/db/skills`, `/db/mods`. Раздел «для игроков»: **нет** файлов в `content/players/**` — текст «скоро» **без** ссылки на несуществующий маршрут (чтобы не плодить предупреждений `checkLinks` и 404).
+- [ ] **Step 6:** Секция **3.6**: навигационный список оформить **markdown-ссылками** на `/dev/memento-roll`, `/games/gen`, `/db/items`, `/db/skills`, `/db/mods` (те же причины для `checkLinks`). Раздел «для игроков»: **нет** файлов в `content/players/**` — текст «скоро» **без** ссылки на несуществующий маршрут.
 
 - [ ] **Step 7:** Prebuild и проверка ссылок.
 
