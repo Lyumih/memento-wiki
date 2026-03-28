@@ -1,0 +1,5 @@
+id: combo-meter-trinket
+game: arcade-demo
+type: item
+name: Брелок «счётчик комбо»
+summary: Не влияет на урон, но мигает приятнее, чем индикатор батареи.
