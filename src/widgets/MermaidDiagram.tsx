@@ -25,23 +25,22 @@ export function MermaidDiagram({ definition }: MermaidDiagramProps) {
   const diagramId = `mmd-${reactId.replace(/:/g, '')}`
 
   useEffect(() => {
-    const el = containerRef.current
-    if (!el || !definition.trim()) return undefined
+    const root = containerRef.current
+    if (!root || !definition.trim()) return undefined
 
     ensureMermaidInitialized()
     let cancelled = false
 
     void mermaid.render(diagramId, definition).then(({ svg, bindFunctions }) => {
       if (cancelled) return
-      const root = containerRef.current
-      if (!root) return
+      if (containerRef.current !== root) return
       root.innerHTML = svg
       bindFunctions?.(root)
     })
 
     return () => {
       cancelled = true
-      if (containerRef.current) containerRef.current.innerHTML = ''
+      root.innerHTML = ''
     }
   }, [definition, diagramId])
 
