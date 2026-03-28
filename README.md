@@ -1,75 +1,44 @@
-# React + TypeScript + Vite
+# Memento Mori — вики
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Публичная документация по фреймворку **Memento Mori** (бесконечное улучшение механик). Сайт: React 19, Vite 8, Ant Design 6, MDX.
 
-Currently, two official plugins are available:
+## Спецификации
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Вики: `docs/superpowers/specs/2026-03-28-memento-wiki-design.md`
+- Норматив формул для виджетов (Gen): репозиторий `gen-sp`, файл `docs/superpowers/specs/2026-03-28-gen-game-design.md` и код `src/game/memento/`
 
-## React Compiler
+## Разработка
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Перед `dev` и `build` автоматически выполняется `scripts/prebuild.mjs`: генерируются `src/generated/nav.json` и `src/generated/db.json` (файлы в `.gitignore`). Без этого шага импорты JSON в приложении не соберутся.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run test
+npm run build
 ```
+
+## Контент
+
+| Путь | Назначение |
+|------|------------|
+| `content/index.mdx` | Главная `/` |
+| `content/players/**/*.mdx` | Раздел для игроков → `/players/...` |
+| `content/dev/**/*.mdx` | Для разработчиков → `/dev/...` |
+| `content/games/*.mdx` | Примеры игр → `/games/...` |
+| `content/db/items/*.yaml` и т.д. | Каталог БД (см. схему в спеке, приложение C) |
+
+Frontmatter статей: `title`, `audience` (`players` \| `dev` \| `both`), опционально `order`, `game`. Файл `index.mdx` в подпапке даёт URL каталога без суффикса `/index`.
+
+В MDX доступны виджеты `<RollLevelDemo />` и `<PercentTokenDemo />` (импорт из `@/widgets/...` при необходимости).
+
+## Деплой (SPA)
+
+Сборка — одностраничное приложение. На хостинге настройте fallback всех путей на `index.html` (например копия `index.html` как `404.html` для GitHub Pages, или `_redirects` на Netlify).
+
+## Импорт в «Базу данных»
+
+Поддерживается слой `content/db/*/generated/*.yaml`: при совпадении `id` с ручной записью поля из generated перезаписывают ручные (см. план в `docs/superpowers/plans/2026-03-28-memento-wiki.md`).

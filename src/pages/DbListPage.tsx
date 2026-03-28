@@ -1,0 +1,60 @@
+import { Card, List, Select, Space, Typography } from 'antd'
+import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
+import rawDb from '@/generated/db.json'
+import type { WikiDb } from '@/types/wikiDb'
+
+const db = rawDb as WikiDb
+
+export type DbKind = 'items' | 'skills' | 'modifiers'
+
+const routeSeg: Record<DbKind, string> = {
+  items: 'items',
+  skills: 'skills',
+  modifiers: 'mods',
+}
+
+const titles: Record<DbKind, string> = {
+  items: 'Предметы',
+  skills: 'Умения',
+  modifiers: 'Модификаторы',
+}
+
+export default function DbListPage({ kind }: { kind: DbKind }) {
+  const rows = db[kind]
+  const games = useMemo(
+    () => [...new Set(rows.map((r) => r.game))].sort(),
+    [rows],
+  )
+  const [game, setGame] = useState<string>('all')
+  const filtered =
+    game === 'all' ? rows : rows.filter((r) => r.game === game)
+  const base = `/db/${routeSeg[kind]}`
+
+  return (
+    <Space direction="vertical" size="large" style={{ width: '100%' }}>
+      <Typography.Title level={2}>{titles[kind]}</Typography.Title>
+      <Select
+        style={{ minWidth: 200 }}
+        value={game}
+        onChange={setGame}
+        options={[
+          { value: 'all', label: 'Все игры' },
+          ...games.map((g) => ({ value: g, label: g })),
+        ]}
+      />
+      <Card size="small">
+        <List
+          dataSource={filtered}
+          locale={{ emptyText: 'Нет записей' }}
+          renderItem={(item) => (
+            <List.Item>
+              <Link to={`${base}/${item.id}`}>{item.name}</Link>
+              <Typography.Text type="secondary"> — {item.summary}</Typography.Text>
+            </List.Item>
+          )}
+        />
+      </Card>
+    </Space>
+  )
+}
