@@ -2,9 +2,22 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
-    environment: 'node',
-    include: ['src/memento/**/*.test.ts'],
-    passWithNoTests: true,
+    passWithNoTests: false,
+    projects: [
+      {
+        test: {
+          name: 'memento',
+          environment: 'node',
+          include: ['src/memento/**/*.test.ts'],
+        },
+      },
+      {
+        test: {
+          name: 'widgets',
+          environment: 'jsdom',
+          include: ['src/widgets/**/*.test.{ts,tsx}'],
+        },
+      },
+    ],
   },
 })
-
