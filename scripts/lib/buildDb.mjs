@@ -24,6 +24,11 @@ const folders = [
   { dir: 'mods', key: 'modifiers', type: 'modifier' },
 ]
 
+/** fast-glob expects forward slashes in patterns (Windows path.join breaks globs). */
+function toGlobPattern(p) {
+  return p.split(path.sep).join('/')
+}
+
 export async function buildDb() {
   fs.mkdirSync(outDir, { recursive: true })
 
@@ -37,10 +42,10 @@ export async function buildDb() {
     const base = path.join(root, 'content', 'db', sub)
     const generated = path.join(base, 'generated')
     const patterns = [
-      path.join(base, '*.yaml'),
-      path.join(base, '*.yml'),
-      path.join(generated, '*.yaml'),
-      path.join(generated, '*.yml'),
+      toGlobPattern(path.join(base, '*.yaml')),
+      toGlobPattern(path.join(base, '*.yml')),
+      toGlobPattern(path.join(generated, '*.yaml')),
+      toGlobPattern(path.join(generated, '*.yml')),
     ]
     const files = await fg(patterns, { absolute: true, onlyFiles: true })
     const manual = files.filter((f) => !f.includes(`${path.sep}generated${path.sep}`))
