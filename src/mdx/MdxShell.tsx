@@ -1,9 +1,11 @@
 import { MDXProvider } from '@mdx-js/react'
 import type { ReactNode } from 'react'
-import { RollLevelDemo } from '@/widgets/RollLevelDemo'
+import { MermaidDiagram } from '@/widgets/MermaidDiagram'
 import { PercentTokenDemo } from '@/widgets/PercentTokenDemo'
+import { RollLevelDemo } from '@/widgets/RollLevelDemo'
 
 const components = {
+  MermaidDiagram,
   RollLevelDemo,
   PercentTokenDemo,
 }
