@@ -13,9 +13,10 @@ describe('rollMementoLevelUp', () => {
       [50, 100],
       [100, 99],
       [100, 100],
-      [101, 1],
-      [101, 2],
+      [101, 99],
+      [101, 100],
       [200, 1],
+      [200, 100],
     ]
     for (const [level, r] of pairs) {
       expect(rollMementoLevelUp(level, r)).toBe(rollCardLevelUp(level, r))

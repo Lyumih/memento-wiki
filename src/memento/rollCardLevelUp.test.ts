@@ -13,10 +13,11 @@ describe('rollCardLevelUp', () => {
     expect(rollCardLevelUp(100, 100)).toBe(true)
   })
 
-  it('level > 100 succeeds only when r is 1 (1%)', () => {
-    expect(rollCardLevelUp(101, 1)).toBe(true)
-    expect(rollCardLevelUp(101, 2)).toBe(false)
-    expect(rollCardLevelUp(200, 1)).toBe(true)
+  it('level > 100 succeeds only when r is 100 (1%)', () => {
+    expect(rollCardLevelUp(101, 99)).toBe(false)
+    expect(rollCardLevelUp(101, 100)).toBe(true)
+    expect(rollCardLevelUp(200, 1)).toBe(false)
+    expect(rollCardLevelUp(200, 100)).toBe(true)
   })
 
   it('level 50: r=49 fails, r=50 succeeds', () => {

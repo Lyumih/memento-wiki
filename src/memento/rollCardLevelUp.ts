@@ -4,6 +4,6 @@ export function rollCardLevelUp(
   randomInt1to100: number,
 ): boolean {
   const r = randomInt1to100
-  if (currentLevel > 100) return r === 1
+  if (currentLevel > 100) return r === 100
   return r === 100 || r >= currentLevel
 }
