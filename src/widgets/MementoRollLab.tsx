@@ -22,35 +22,59 @@ export function MementoRollLab() {
   const [lastR, setLastR] = useState<number | null>(null)
   const [lastOk, setLastOk] = useState<boolean | null>(null)
 
-  const lowRows = useMemo(
-    () =>
-      MILESTONES_LOW.map((T) => ({
-        key: String(T),
-        target: T,
-        expected: expectedRollsToReachLevel(startLevel, T),
+  const lowColumns = useMemo(
+    () => [
+      {
+        title: ' ',
+        dataIndex: 'label',
+        key: 'label',
+        fixed: 'left' as const,
+        width: 200,
+      },
+      ...MILESTONES_LOW.map((T) => ({
+        title: String(T),
+        dataIndex: `m${T}`,
+        key: `m${T}`,
+        align: 'right' as const,
       })),
-    [startLevel],
+    ],
+    [],
   )
 
-  const highRows = useMemo(
-    () =>
-      MILESTONES_HIGH.map((T) => ({
-        key: String(T),
-        target: T,
-        expected: expectedRollsToReachLevel(startLevel, T),
+  const lowRow = useMemo(() => {
+    const row: Record<string, string> = { key: 'low', label: 'E_cum(S, T), ожидание бросков' }
+    for (const T of MILESTONES_LOW) {
+      row[`m${T}`] = formatExpectation(expectedRollsToReachLevel(startLevel, T))
+    }
+    return [row]
+  }, [startLevel])
+
+  const highColumns = useMemo(
+    () => [
+      {
+        title: ' ',
+        dataIndex: 'label',
+        key: 'label',
+        fixed: 'left' as const,
+        width: 200,
+      },
+      ...MILESTONES_HIGH.map((T) => ({
+        title: String(T),
+        dataIndex: `m${T}`,
+        key: `m${T}`,
+        align: 'right' as const,
       })),
-    [startLevel],
+    ],
+    [],
   )
 
-  const columns = [
-    { title: 'Цель T', dataIndex: 'target', key: 'target', width: 100 },
-    {
-      title: 'E_cum(S, T), ожидание бросков',
-      dataIndex: 'expected',
-      key: 'expected',
-      render: (v: number) => formatExpectation(v),
-    },
-  ]
+  const highRow = useMemo(() => {
+    const row: Record<string, string> = { key: 'high', label: 'E_cum(S, T), ожидание бросков' }
+    for (const T of MILESTONES_HIGH) {
+      row[`m${T}`] = formatExpectation(expectedRollsToReachLevel(startLevel, T))
+    }
+    return [row]
+  }, [startLevel])
 
   const tryLevelUp = () => {
     const r = Math.floor(Math.random() * 100) + 1
@@ -114,13 +138,25 @@ export function MementoRollLab() {
           Если T ≤ S, ожидание 0 (цель не выше старта). Веха 100 приведена в обеих таблицах намеренно.
         </Typography.Paragraph>
         <Typography.Text strong style={{ display: 'block', marginBottom: 8 }}>
-          Вехи 10…100
+          Вехи 10…100 (колонки — цель T)
         </Typography.Text>
-        <Table size="small" pagination={false} columns={columns} dataSource={lowRows} />
+        <Table
+          size="small"
+          pagination={false}
+          columns={lowColumns}
+          dataSource={lowRow}
+          scroll={{ x: 'max-content' }}
+        />
         <Typography.Text strong style={{ display: 'block', margin: '16px 0 8px' }}>
-          Вехи 100…1000
+          Вехи 100…1000 (колонки — цель T)
         </Typography.Text>
-        <Table size="small" pagination={false} columns={columns} dataSource={highRows} />
+        <Table
+          size="small"
+          pagination={false}
+          columns={highColumns}
+          dataSource={highRow}
+          scroll={{ x: 'max-content' }}
+        />
       </section>
     </Space>
   )
