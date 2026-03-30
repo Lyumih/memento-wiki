@@ -52,7 +52,7 @@ export const MILESTONES_HIGH = [100, 200, 300, 400, 500, 600, 700, 800, 900, 100
 - `expectedRollsForOneSuccess(level: number): number` → `1 / cardLevelUpSuccessProbability(level)`.
 - `expectedRollsToReachLevel(startLevel: number, targetLevel: number): number` → если `targetLevel <= startLevel` return `0`; иначе `sum(expectedRollsForOneSuccess(L) for L from startLevel to targetLevel-1 inclusive)`.
 
-Проверка согласованности с `rollCardLevelUp`: для выборочных пар `(L,r)` вероятность успеха по перебору `r` совпадает с `cardLevelUpSuccessProbability(L)` (опциональный тест в том же файле).
+Проверка согласованности с `rollCardLevelUp`: см. рекомендуемый перебор всех `r` в Step 2 после основных тестов (спека §6).
 
 - [ ] **Step 1: Написать падающий тест**
 
@@ -91,8 +91,15 @@ describe('cardLevelUpStats', () => {
     expect(expectedRollsToReachLevel(5, 5)).toBe(0)
     expect(expectedRollsToReachLevel(10, 3)).toBe(0)
   })
+
+  it('L = 200 matches high-level rule (same as L > 100)', () => {
+    expect(cardLevelUpSuccessProbability(200)).toBe(0.01)
+    expect(expectedRollsForOneSuccess(200)).toBe(100)
+  })
 })
 ```
+
+После зелёных тестов добавить **рекомендуемый** тест согласованности с `rollCardLevelUp`: для **`L ∈ {1, 50, 100, 101}`** перебрать все **`r` от 1 до 100**, доля успехов должна совпасть с `cardLevelUpSuccessProbability(L)` с допуском `0` (ровное совпадение).
 
 - [ ] **Step 2: Запустить тест — ожидается FAIL** (`функции не существуют`)
 
@@ -134,6 +141,8 @@ git commit -m "feat(memento): card level-up expectation stats"
 
 ```bash
 git add src/widgets/LevelUpExpectationChart.tsx
+# при наличии теста:
+git add src/widgets/LevelUpExpectationChart.test.tsx
 git commit -m "feat(widgets): chart E1(L) for card level-up"
 ```
 
@@ -212,7 +221,7 @@ git commit -m "feat(widgets): MementoRollLab for dev roll page"
 2. Секция **«Формулы: бросок уровня»** — текст на русском:
    - равномерный `r ∈ {1,…,100}`;
    - при `L > 100` успех только при `r = 100`, `P = 1/100`, `E₁ = 100`;
-   - при `1 ≤ L ≤ 100` успех при `r ≥ L` (эквивалентно исходам `L…100`), `P = (101−L)/100`, `E₁ = 1/P`;
+   - при `1 ≤ L ≤ 100` — как в коде: успех при **`r === 100` или `r ≥ L`**; для целых `r` из `1…100` это те же **`101 − L`** благоприятных исходов, `P = (101−L)/100`, `E₁ = 1/P`;
    - кумулятив `E_cum(S,T) = Σ_{L=S}^{T−1} E₁(L)` при `T > S`, иначе `0`.
 3. Секция **«Токены %%»** — кратко три вида (`plain` / `cap` / `neg`) в терминах `resolvePercentToken`, без полного копипаста спеки; отсылка к коду.
 4. Импорт: `import { MementoRollLab } from '@/widgets/MementoRollLab'` (или только через глобальный компонент из `MdxShell` — если в проекте принято не импортировать, а писать `<MementoRollLab />` без импорта, следовать **текущему** стилю `memento-roll.mdx`: сейчас там явные импорты — **оставить явный импорт** `MementoRollLab`).
