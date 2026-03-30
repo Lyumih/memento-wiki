@@ -4,13 +4,20 @@ import { defineConfig } from 'vite'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
 import mdx from '@mdx-js/rollup'
+import remarkFrontmatter from 'remark-frontmatter'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    { enforce: 'pre', ...mdx({ providerImportSource: '@mdx-js/react' }) },
+    {
+      enforce: 'pre',
+      ...mdx({
+        providerImportSource: '@mdx-js/react',
+        remarkPlugins: [remarkFrontmatter],
+      }),
+    },
     react(),
     babel({ presets: [reactCompilerPreset()] }),
   ],

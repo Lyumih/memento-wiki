@@ -54,7 +54,6 @@
   width: 1126px;
   max-width: 100%;
   margin: 0 auto;
-  text-align: center;
   border-inline: 1px solid var(--border);
   min-height: 100svh;
   display: flex;
@@ -112,5 +111,29 @@ code {
 
 .wiki-article h1 {
   margin-top: 0;
-  color: var(--text-h);
+}
+
+/*
+ * Колонка контента — светлая тема Ant; :root при prefers-color-scheme: dark
+ * меняет --code-bg на тёмный, а colorText Ant остаётся тёмным → code «чёрный на чёрном».
+ * Здесь фиксируем светлую схему и свои цвета инлайн-кода.
+ */
+.ant-layout-content {
+  color-scheme: light;
+}
+
+.ant-layout-content .wiki-article {
+  color: inherit;
+  --wiki-inline-code-fg: rgba(0, 0, 0, 0.88);
+  --wiki-inline-code-bg: #f4f3ec;
+}
+
+.ant-layout-content .wiki-article h1,
+.ant-layout-content .wiki-article h2 {
+  color: inherit;
+}
+
+.ant-layout-content .wiki-article code {
+  color: var(--wiki-inline-code-fg);
+  background: var(--wiki-inline-code-bg);
 }
