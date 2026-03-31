@@ -52,7 +52,7 @@ export function CardEmulationSandbox() {
       <Card title="Эмуляция уровня карты" size="small">
         <Space direction="vertical" style={{ width: '100%' }}>
           <Typography.Text>
-            Старт для сброса S (1–999): {startLevel}. Кнопка «Сбросить уровень» возвращает L к S.
+            Старт S (1–999): {startLevel}. Кнопка «Обновить уровень» выставляет L = S.
           </Typography.Text>
           <Slider
             min={1}
@@ -70,7 +70,7 @@ export function CardEmulationSandbox() {
             <Button type="primary" onClick={tryLevelUp}>
               Поднять уровень
             </Button>
-            <Button onClick={resetLevel}>Сбросить уровень</Button>
+            <Button onClick={resetLevel}>Обновить уровень</Button>
           </Space>
           {lastR !== null && lastOk !== null ? (
             <Typography.Text type={lastOk ? 'success' : 'secondary'}>
