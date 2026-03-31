@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 import { useMemo } from 'react'
+import { Spin } from 'antd'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import WikiLayout from './WikiLayout'
 import DbListPage from '@/pages/DbListPage'
@@ -52,6 +53,11 @@ export function AppRouter() {
         {
           path: '/',
           element: <WikiLayout />,
+          hydrateFallbackElement: (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: 48 }}>
+              <Spin size="large" />
+            </div>
+          ),
           children: [
             ...buildMdxRoutes(),
             { path: 'db/items', element: <DbListPage kind="items" /> },

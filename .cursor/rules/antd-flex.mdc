@@ -1,0 +1,38 @@
+---
+description: В разметке Ant Design использовать Flex вместо Space
+globs: src/**/*.{tsx,ts}
+alwaysApply: false
+---
+
+# Ant Design: Flex вместо Space
+
+Для отступов между дочерними элементами **не используй** `Space` из `antd`. Используй **`Flex`** (`import { Flex } from 'antd'`).
+
+`Space` в Ant Design ренерится как `inline-flex`, из‑за этого колонки часто не занимают всю ширину родителя; `Flex` предсказуемее для лейаута.
+
+## Соответствие пропсов
+
+- `direction="vertical"` / `vertical` у `Space` → `vertical` на `Flex`
+- `size` / массив размеров → `gap` (например `gap="large"`, `gap={16}` или `gap={[8, 16]}`)
+- `wrap` → `wrap`
+- `align` → `align` (значения как у `align-items`)
+
+## Пример
+
+```tsx
+// ❌ не так
+import { Space } from "antd";
+<Space direction="vertical" size="large" style={{ width: "100%" }}>
+  {children}
+</Space>;
+
+// ✅ так
+import { Flex } from "antd";
+<Flex vertical gap="large" style={{ width: "100%" }}>
+  {children}
+</Flex>;
+```
+
+Горизонтальный ряд без `vertical`: `<Flex gap="middle" wrap="wrap">…</Flex>`.
+
+При правках существующего кода по возможности **мигрируй** `Space` → `Flex` в затронутых файлах.

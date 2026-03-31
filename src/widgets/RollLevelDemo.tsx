@@ -9,7 +9,7 @@ export function RollLevelDemo() {
 
   return (
     <Card title="Бросок улучшения уровня карты" size="small" style={{ marginTop: 16 }}>
-      <Space direction="vertical" style={{ width: '100%' }}>
+      <Space orientation="vertical" style={{ width: '100%' }}>
         <Typography.Text>Текущий уровень карты: {level}</Typography.Text>
         <Slider min={1} max={200} value={level} onChange={setLevel} />
         <Typography.Text>Случайное r (1–100): {r}</Typography.Text>

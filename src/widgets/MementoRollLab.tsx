@@ -91,41 +91,72 @@ export function MementoRollLab() {
   }
 
   return (
-    <Space direction="vertical" size="large" style={{ width: '100%', marginTop: 24 }}>
-      <Card title="Эмуляция уровня карты" size="small">
-        <Space direction="vertical" style={{ width: '100%' }}>
-          <Typography.Text>
-            Старт S (1–999) для таблиц и обновления L: {startLevel}
-          </Typography.Text>
-          <Slider
-            min={1}
-            max={999}
-            value={startLevel}
-            onChange={setStartLevel}
-            marks={{ 1: '1', 250: '250', 500: '500', 750: '750', 999: '999' }}
-          />
-          <Space wrap>
-            <Typography.Text>С:</Typography.Text>
-            <InputNumber min={1} max={999} value={startLevel} onChange={(v) => setStartLevel(v ?? 1)} />
-          </Space>
-          <Typography.Text strong>Текущий уровень эмуляции L: {emulLevel}</Typography.Text>
-          <Space wrap>
-            <Button type="primary" onClick={tryLevelUp}>
-              Поднять уровень
-            </Button>
-            <Button onClick={resetLevel}>Обновить уровень</Button>
-          </Space>
-          {lastR !== null && lastOk !== null ? (
-            <Typography.Text type={lastOk ? 'success' : 'secondary'}>
-              Бросок r = {lastR}: {lastOk ? 'успех (+1 уровень)' : 'без улучшения'}
+    <Space
+      orientation="vertical"
+      size="large"
+      style={{ width: '100%', marginTop: 24, display: 'flex', flexDirection: 'column' }}
+      styles={{ item: { width: '100%', maxWidth: '100%', minWidth: 0 } }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 16,
+          alignItems: 'stretch',
+          width: '100%',
+          boxSizing: 'border-box',
+        }}
+      >
+        <Card
+          title="Эмуляция уровня карты"
+          size="small"
+          style={{ flex: '1 1 0', minWidth: 0, width: '100%', maxWidth: '100%' }}
+        >
+          <Space orientation="vertical" style={{ width: '100%' }}>
+            <Typography.Text>
+              Старт S (1–999) для таблиц и обновления L: {startLevel}
             </Typography.Text>
-          ) : (
-            <Typography.Text type="secondary">Сделайте бросок или обновите уровень.</Typography.Text>
-          )}
-        </Space>
-      </Card>
+            <Slider
+              min={1}
+              max={999}
+              value={startLevel}
+              onChange={setStartLevel}
+              marks={{ 1: '1', 250: '250', 500: '500', 750: '750', 999: '999' }}
+            />
+            <Space wrap>
+              <Typography.Text>С:</Typography.Text>
+              <InputNumber min={1} max={999} value={startLevel} onChange={(v) => setStartLevel(v ?? 1)} />
+            </Space>
+            <Typography.Text strong>Текущий уровень эмуляции L: {emulLevel}</Typography.Text>
+            <Space wrap>
+              <Button type="primary" onClick={tryLevelUp}>
+                Поднять уровень
+              </Button>
+              <Button onClick={resetLevel}>Обновить уровень</Button>
+            </Space>
+            {lastR !== null && lastOk !== null ? (
+              <Typography.Text type={lastOk ? 'success' : 'secondary'}>
+                Бросок r = {lastR}: {lastOk ? 'успех (+1 уровень)' : 'без улучшения'}
+              </Typography.Text>
+            ) : (
+              <Typography.Text type="secondary">Сделайте бросок или обновите уровень.</Typography.Text>
+            )}
+          </Space>
+        </Card>
 
-      <PercentTokenDemo level={emulLevel} />
+        <div
+          style={{
+            flex: '1 1 0',
+            minWidth: 0,
+            width: '100%',
+            maxWidth: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <PercentTokenDemo level={emulLevel} noOuterMargin />
+        </div>
+      </div>
 
       <section>
         <Typography.Title level={4}>График E₁(L)</Typography.Title>

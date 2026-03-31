@@ -32,7 +32,7 @@ export default function DbListPage({ kind }: { kind: DbKind }) {
   const base = `/db/${routeSeg[kind]}`
 
   return (
-    <Space direction="vertical" size="large" style={{ width: '100%' }}>
+    <Space orientation="vertical" size="large" style={{ width: '100%' }}>
       <Typography.Title level={2}>{titles[kind]}</Typography.Title>
       <Select
         style={{ minWidth: 200 }}

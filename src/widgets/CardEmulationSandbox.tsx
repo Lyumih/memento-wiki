@@ -6,8 +6,8 @@ import { replacePercentTokensInText } from '@/memento/resolvePercentToken'
 const INITIAL_DRAFT = `Огненный шар
 Тактическое умение, урон по площади.
 
-Снарядов за применение: 1%%f — целое вниз от роста по L (суффикс f после %%, см. /dev/memento-roll).
-Охват взрыва: 150%% единиц площади на сетке (радиус и число затронутых клеток масштабируются с L).`
+Снарядов за применение: 1%%f — на высоком уровне залп становится гуще.
+Охват взрыва: 150%% площади поражения; сильнее карта — шире взрыв.`
 
 export function CardEmulationSandbox() {
   const [startLevel, setStartLevel] = useState(1)
@@ -36,55 +36,79 @@ export function CardEmulationSandbox() {
   )
 
   return (
-    <Space direction="vertical" size="large" style={{ width: '100%', marginTop: 24 }}>
-      <Card title="Создайте вашу карту или предмет" size="small">
-        <Space direction="vertical" style={{ width: '100%' }} size="middle">
-          <Input.TextArea rows={8} value={draft} onChange={(e) => setDraft(e.target.value)} />
-          <Typography.Text type="secondary">Превью (L = {emulLevel}):</Typography.Text>
-          <Typography.Paragraph
-            style={{
-              whiteSpace: 'pre-wrap',
-              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-              marginBottom: 0,
-            }}
-          >
-            {preview}
-          </Typography.Paragraph>
-        </Space>
-      </Card>
+    <Space
+      orientation="vertical"
+      size="large"
+      style={{ width: '100%', marginTop: 24, display: 'flex', flexDirection: 'column' }}
+      styles={{ item: { width: '100%', maxWidth: '100%', minWidth: 0 } }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 16,
+          alignItems: 'stretch',
+          width: '100%',
+          boxSizing: 'border-box',
+        }}
+      >
+        <Card
+          title="Создайте вашу карту или предмет"
+          size="small"
+          style={{ flex: '1 1 0', minWidth: 0, width: '100%', maxWidth: '100%' }}
+        >
+          <Space orientation="vertical" style={{ width: '100%' }} size="middle">
+            <Input.TextArea rows={8} value={draft} onChange={(e) => setDraft(e.target.value)} />
+            <Typography.Text type="secondary">Превью (L = {emulLevel}):</Typography.Text>
+            <Typography.Paragraph
+              style={{
+                whiteSpace: 'pre-wrap',
+                fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+                marginBottom: 0,
+              }}
+            >
+              {preview}
+            </Typography.Paragraph>
+          </Space>
+        </Card>
 
-      <Card title="Эмуляция уровня карты" size="small">
-        <Space direction="vertical" style={{ width: '100%' }}>
-          <Typography.Text>
-            Старт S (1–999): {startLevel}. Кнопка «Обновить уровень» выставляет L = S.
-          </Typography.Text>
-          <Slider
-            min={1}
-            max={999}
-            value={startLevel}
-            onChange={setStartLevel}
-            marks={{ 1: '1', 250: '250', 500: '500', 750: '750', 999: '999' }}
-          />
-          <Space wrap>
-            <Typography.Text>S:</Typography.Text>
-            <InputNumber min={1} max={999} value={startLevel} onChange={(v) => setStartLevel(v ?? 1)} />
-          </Space>
-          <Typography.Text strong>Текущий уровень эмуляции L: {emulLevel}</Typography.Text>
-          <Space wrap>
-            <Button type="primary" onClick={tryLevelUp}>
-              Поднять уровень
-            </Button>
-            <Button onClick={resetLevel}>Обновить уровень</Button>
-          </Space>
-          {lastR !== null && lastOk !== null ? (
-            <Typography.Text type={lastOk ? 'success' : 'secondary'}>
-              Бросок r = {lastR}: {lastOk ? 'успех (+1 уровень)' : 'без улучшения'}
+        <Card
+          title="Эмуляция уровня карты"
+          size="small"
+          style={{ flex: '1 1 0', minWidth: 0, width: '100%', maxWidth: '100%' }}
+        >
+          <Space orientation="vertical" style={{ width: '100%' }}>
+            <Typography.Text>
+              Старт S (1–999): {startLevel}. Кнопка «Обновить уровень» выставляет L = S.
             </Typography.Text>
-          ) : (
-            <Typography.Text type="secondary">Сделайте бросок или обновите уровень.</Typography.Text>
-          )}
-        </Space>
-      </Card>
+            <Slider
+              min={1}
+              max={999}
+              value={startLevel}
+              onChange={setStartLevel}
+              marks={{ 1: '1', 250: '250', 500: '500', 750: '750', 999: '999' }}
+            />
+            <Space wrap>
+              <Typography.Text>S:</Typography.Text>
+              <InputNumber min={1} max={999} value={startLevel} onChange={(v) => setStartLevel(v ?? 1)} />
+            </Space>
+            <Typography.Text strong>Текущий уровень эмуляции L: {emulLevel}</Typography.Text>
+            <Space wrap>
+              <Button type="primary" onClick={tryLevelUp}>
+                Поднять уровень
+              </Button>
+              <Button onClick={resetLevel}>Обновить уровень</Button>
+            </Space>
+            {lastR !== null && lastOk !== null ? (
+              <Typography.Text type={lastOk ? 'success' : 'secondary'}>
+                Бросок r = {lastR}: {lastOk ? 'успех (+1 уровень)' : 'без улучшения'}
+              </Typography.Text>
+            ) : (
+              <Typography.Text type="secondary">Сделайте бросок или обновите уровень.</Typography.Text>
+            )}
+          </Space>
+        </Card>
+      </div>
     </Space>
   )
 }
