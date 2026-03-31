@@ -33,7 +33,7 @@ export function CardEmulationSandbox() {
 
   return (
     <Space direction="vertical" size="large" style={{ width: '100%', marginTop: 24 }}>
-      <Card title="Текст и превью" size="small">
+      <Card title="Создайте вашу карту или предмет" size="small">
         <Space direction="vertical" style={{ width: '100%' }} size="middle">
           <Input.TextArea rows={8} value={draft} onChange={(e) => setDraft(e.target.value)} />
           <Typography.Text type="secondary">Превью (L = {emulLevel}):</Typography.Text>
