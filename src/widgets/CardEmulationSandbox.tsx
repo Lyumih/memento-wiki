@@ -33,6 +33,22 @@ export function CardEmulationSandbox() {
 
   return (
     <Space direction="vertical" size="large" style={{ width: '100%', marginTop: 24 }}>
+      <Card title="Текст и превью" size="small">
+        <Space direction="vertical" style={{ width: '100%' }} size="middle">
+          <Input.TextArea rows={8} value={draft} onChange={(e) => setDraft(e.target.value)} />
+          <Typography.Text type="secondary">Превью (L = {emulLevel}):</Typography.Text>
+          <Typography.Paragraph
+            style={{
+              whiteSpace: 'pre-wrap',
+              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+              marginBottom: 0,
+            }}
+          >
+            {preview}
+          </Typography.Paragraph>
+        </Space>
+      </Card>
+
       <Card title="Эмуляция уровня карты" size="small">
         <Space direction="vertical" style={{ width: '100%' }}>
           <Typography.Text>
@@ -63,22 +79,6 @@ export function CardEmulationSandbox() {
           ) : (
             <Typography.Text type="secondary">Сделайте бросок или сброс.</Typography.Text>
           )}
-        </Space>
-      </Card>
-
-      <Card title="Текст и превью" size="small">
-        <Space direction="vertical" style={{ width: '100%' }} size="middle">
-          <Input.TextArea rows={8} value={draft} onChange={(e) => setDraft(e.target.value)} />
-          <Typography.Text type="secondary">Превью (L = {emulLevel}):</Typography.Text>
-          <Typography.Paragraph
-            style={{
-              whiteSpace: 'pre-wrap',
-              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-              marginBottom: 0,
-            }}
-          >
-            {preview}
-          </Typography.Paragraph>
         </Space>
       </Card>
     </Space>
