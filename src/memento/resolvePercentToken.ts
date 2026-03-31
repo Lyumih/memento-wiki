@@ -12,6 +12,9 @@ export type ParsedPercentToken =
 
 const TOKEN_RE = /^(-?\d+)%%(?:-(\d+)|(\d+))?$/u
 
+/** Те же группы, что у `TOKEN_RE`, для поиска токенов внутри произвольного текста. */
+const TOKEN_IN_TEXT_RE = /(-?\d+)%%(?:-(\d+)|(\d+))?/gu
+
 export function parsePercentToken(s: string): ParsedPercentToken | null {
   const m = s.trim().match(TOKEN_RE)
   if (!m) return null
@@ -53,4 +56,27 @@ export function resolvePercentValue(level: number, token: string): number | null
 /** Алиас по приложению B спеки вики; поведение = resolvePercentValue */
 export function resolvePercentToken(level: number, token: string): number | null {
   return resolvePercentValue(level, token)
+}
+
+/**
+ * Однопроходная замена всех валидных токенов `%%` в исходной строке; результат не сканируется повторно.
+ */
+export function replacePercentTokensInText(level: number, text: string): string {
+  let i = 0
+  let out = ''
+  const re = TOKEN_IN_TEXT_RE
+  while (true) {
+    re.lastIndex = i
+    const m = re.exec(text)
+    if (!m) {
+      out += text.slice(i)
+      break
+    }
+    out += text.slice(i, m.index)
+    const candidate = m[0]
+    const value = resolvePercentValue(level, candidate)
+    out += value !== null ? String(value) : candidate
+    i = m.index + candidate.length
+  }
+  return out
 }

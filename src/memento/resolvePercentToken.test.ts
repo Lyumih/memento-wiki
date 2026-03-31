@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { parsePercentToken, resolvePercentValue, resolvePercentToken } from './resolvePercentToken'
+import {
+  parsePercentToken,
+  replacePercentTokensInText,
+  resolvePercentValue,
+  resolvePercentToken,
+} from './resolvePercentToken'
 
 describe('parsePercentToken', () => {
   it('parses plain BASE%%', () => {
@@ -51,5 +56,28 @@ describe('resolvePercentValue', () => {
 describe('resolvePercentToken', () => {
   it('aliases resolvePercentValue (spec B wiki name)', () => {
     expect(resolvePercentToken(0, '40%%')).toBe(40)
+  })
+})
+
+describe('replacePercentTokensInText', () => {
+  it('leaves plain text unchanged at level 50', () => {
+    expect(replacePercentTokensInText(50, 'hello\nworld')).toBe('hello\nworld')
+  })
+
+  it('replaces valid tokens at L=0', () => {
+    expect(replacePercentTokensInText(0, 'a 10%% b 20%%50 c')).toBe('a 10 b 20 c')
+  })
+
+  it('leaves invalid 40%%0 and 40%%-0 unchanged at level 10', () => {
+    expect(replacePercentTokensInText(10, '40%%0 x 40%%-0')).toBe('40%%0 x 40%%-0')
+  })
+
+  it('replaces 40%% with resolved value in the middle of lines at L=100', () => {
+    expect(resolvePercentValue(100, '40%%')).toBe(80)
+    expect(replacePercentTokensInText(100, 'line1\n40%%\nline2')).toBe('line1\n80\nline2')
+  })
+
+  it('does not rematch inside replacement (10%% -> 10)', () => {
+    expect(replacePercentTokensInText(0, '10%%')).toBe('10')
   })
 })
