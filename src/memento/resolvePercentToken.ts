@@ -3,20 +3,32 @@
  *
  * Форма `BASE%%-P`: от L=0 (значение BASE) до L=100 — линейно к BASE×(1−P/200);
  * при L>100 заморозка на значении при L=100 (как для %%CAP, решение v0).
+ *
+ * Форма `BASE%%f`: как plain по множителю (1+0,01·L), но округление **вниз** (`Math.floor`) —
+ * удобно для счётчиков вроде числа снарядов.
  */
 
 export type ParsedPercentToken =
   | { kind: 'plain'; base: number }
+  | { kind: 'plainFloor'; base: number }
   | { kind: 'cap'; base: number; cap: number }
   | { kind: 'neg'; base: number; p: number }
 
+const TOKEN_FLOOR_RE = /^(-?\d+)%%f$/u
 const TOKEN_RE = /^(-?\d+)%%(?:-(\d+)|(\d+))?$/u
 
-/** Те же группы, что у `TOKEN_RE`, для поиска токенов внутри произвольного текста. */
-const TOKEN_IN_TEXT_RE = /(-?\d+)%%(?:-(\d+)|(\d+))?/gu
+/**
+ * Поиск в тексте: сначала `BASE%%f` (длиннее, чем префикс `BASE%%`), затем остальные формы.
+ */
+const TOKEN_IN_TEXT_RE = /(-?\d+)%%f|(-?\d+)%%(?:-(\d+)|(\d+))?/gu
 
 export function parsePercentToken(s: string): ParsedPercentToken | null {
-  const m = s.trim().match(TOKEN_RE)
+  const t = s.trim()
+  const mf = t.match(TOKEN_FLOOR_RE)
+  if (mf) {
+    return { kind: 'plainFloor', base: Number(mf[1]) }
+  }
+  const m = t.match(TOKEN_RE)
   if (!m) return null
   const base = Number(m[1])
   if (m[2] !== undefined) {
@@ -42,6 +54,8 @@ export function resolvePercentValue(level: number, token: string): number | null
   switch (parsed.kind) {
     case 'plain':
       return Math.round(parsed.base * (1 + 0.01 * L))
+    case 'plainFloor':
+      return Math.floor(parsed.base * (1 + 0.01 * L))
     case 'cap': {
       const t = Math.min(L, 100)
       return Math.round(parsed.base * (1 + (parsed.cap / 100) * (t / 100)))

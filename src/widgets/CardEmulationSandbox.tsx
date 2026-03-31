@@ -6,7 +6,7 @@ import { replacePercentTokensInText } from '@/memento/resolvePercentToken'
 const INITIAL_DRAFT = `Огненный шар
 Тактическое умение, урон по площади.
 
-Снарядов за применение: 1%% — с ростом уровня карты их становится больше.
+Снарядов за применение: 1%%f — целое вниз от роста по L (суффикс f после %%, см. /dev/memento-roll).
 Охват взрыва: 150%% единиц площади на сетке (радиус и число затронутых клеток масштабируются с L).`
 
 export function CardEmulationSandbox() {

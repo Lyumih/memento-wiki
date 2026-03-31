@@ -11,6 +11,11 @@ describe('parsePercentToken', () => {
     expect(parsePercentToken('40%%')).toEqual({ kind: 'plain', base: 40 })
   })
 
+  it('parses BASE%%f (floor plain)', () => {
+    expect(parsePercentToken('1%%f')).toEqual({ kind: 'plainFloor', base: 1 })
+    expect(parsePercentToken('10%%f')).toEqual({ kind: 'plainFloor', base: 10 })
+  })
+
   it('parses BASE%%CAP when CAP > 0', () => {
     expect(parsePercentToken('40%%50')).toEqual({ kind: 'cap', base: 40, cap: 50 })
   })
@@ -32,6 +37,13 @@ describe('resolvePercentValue', () => {
   it('40%%: §3.1 BASE×(1+0.01×L)', () => {
     expect(resolvePercentValue(0, '40%%')).toBe(40)
     expect(resolvePercentValue(100, '40%%')).toBe(80)
+  })
+
+  it('1%%f: floor(BASE×(1+0.01×L)); L=50,99→1; L=100,101→2', () => {
+    expect(resolvePercentValue(50, '1%%f')).toBe(1)
+    expect(resolvePercentValue(99, '1%%f')).toBe(1)
+    expect(resolvePercentValue(100, '1%%f')).toBe(2)
+    expect(resolvePercentValue(101, '1%%f')).toBe(2)
   })
 
   it('40%%50: §3.2 linear to ×(1+CAP/100) at L=100; freeze after 100', () => {
@@ -79,5 +91,10 @@ describe('replacePercentTokensInText', () => {
 
   it('does not rematch inside replacement (10%% -> 10)', () => {
     expect(replacePercentTokensInText(0, '10%%')).toBe('10')
+  })
+
+  it('prefers 1%%f over 1%% and mixes with plain tokens', () => {
+    expect(replacePercentTokensInText(99, 'n 1%%f x 150%%')).toBe('n 1 x 299')
+    expect(replacePercentTokensInText(100, '1%%f')).toBe('2')
   })
 })
