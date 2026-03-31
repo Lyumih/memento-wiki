@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Реализовать страницу `/dev/memento-card-emulation`: песочница текста с подстановкой всех токенов `%%` при текущем `L` и мини-блок эмуляции уровня (`S`, бросок, сброс), без графика/таблиц; ссылка на `/dev/memento-roll`.
+**Goal:** Реализовать страницу `/dev/memento-card-emulation`: песочница текста с подстановкой всех токенов `%%` при текущем `L` и мини-блок эмуляции уровня (`S`, бросок, «Обновить уровень»), без графика/таблиц; ссылка на `/dev/memento-roll`.
 
 **Architecture:** Чистая функция `replacePercentTokensInText(level, text)` в `src/memento/` рядом с парсером токенов; сканирование слева направо регулярным выражением с тем же «телом», что у `TOKEN_RE`, без якорей `^`/`$`. UI — один виджет `CardEmulationSandbox` (Ant Design: `Input.TextArea`, `Card`, `Slider`, `InputNumber`, `Button`), логика броска скопирована по образцу `MementoRollLab` без выноса общего компонента (v1). Регистрация в `MdxShell`.
 
@@ -112,7 +112,7 @@ git commit -m "feat(memento): replacePercentTokensInText для песочниц
 
 - Состояние: `startLevel` (`S`, 1–999), `emulLevel` (`L`), `lastR`, `lastOk` — как в лаборатории.
 - `tryLevelUp`: `r = floor(random*100)+1`, `ok = rollCardLevelUp(emulLevel, r)`, при успехе `L++`.
-- `resetLevel`: `L = S`, сброс `lastR`/`lastOk`.
+- `resetLevel`: `L = S`, обнуление `lastR`/`lastOk`.
 - UI: `Space vertical`, две карточки (или одна с секциями):
   1. **Эмуляция уровня:** подписи `S`, слайдер 1–999, `InputNumber`, текущий `L`, кнопки, строка с последним `r` и успехом.
   2. **Текст:** `Input.TextArea` (несколько рядов, `showCount` опционально), стиль с `white-space: pre-wrap` на блоке **превью**.

@@ -95,7 +95,7 @@ export function MementoRollLab() {
       <Card title="Эмуляция уровня карты" size="small">
         <Space direction="vertical" style={{ width: '100%' }}>
           <Typography.Text>
-            Старт для таблиц и сброса S (1–999): {startLevel}
+            Старт S (1–999) для таблиц и обновления L: {startLevel}
           </Typography.Text>
           <Slider
             min={1}
@@ -113,14 +113,14 @@ export function MementoRollLab() {
             <Button type="primary" onClick={tryLevelUp}>
               Поднять уровень
             </Button>
-            <Button onClick={resetLevel}>Сбросить уровень</Button>
+            <Button onClick={resetLevel}>Обновить уровень</Button>
           </Space>
           {lastR !== null && lastOk !== null ? (
             <Typography.Text type={lastOk ? 'success' : 'secondary'}>
               Бросок r = {lastR}: {lastOk ? 'успех (+1 уровень)' : 'без улучшения'}
             </Typography.Text>
           ) : (
-            <Typography.Text type="secondary">Сделайте бросок или сброс.</Typography.Text>
+            <Typography.Text type="secondary">Сделайте бросок или обновите уровень.</Typography.Text>
           )}
         </Space>
       </Card>

@@ -48,7 +48,7 @@ export const MILESTONES_HIGH = [100, 200, 300, 400, 500, 600, 700, 800, 900, 100
 
 - `cardLevelUpSuccessProbability(level: number): number`  
   - Для целого `level >= 1`: если `level > 100` → `0.01`; иначе `(101 - level) / 100`.  
-  - Для `level < 1` (защита): можно вернуть `1` как у `rollCardLevelUp(0, r)` (все `r` успешны) **или** явно ограничить демо и не вызывать с `level < 1` — в коде виджета `L` после сброса всегда `>= 1`. План: **для `level < 1` вернуть `1`** чтобы не делить на ноль; график и эмуляция не используют `L < 1`.
+  - Для `level < 1` (защита): можно вернуть `1` как у `rollCardLevelUp(0, r)` (все `r` успешны) **или** явно ограничить демо и не вызывать с `level < 1` — в коде виджета `L` после «Обновить уровень» всегда `>= 1`. План: **для `level < 1` вернуть `1`** чтобы не делить на ноль; график и эмуляция не используют `L < 1`.
 - `expectedRollsForOneSuccess(level: number): number` → `1 / cardLevelUpSuccessProbability(level)`.
 - `expectedRollsToReachLevel(startLevel: number, targetLevel: number): number` → если `targetLevel <= startLevel` return `0`; иначе `sum(expectedRollsForOneSuccess(L) for L from startLevel to targetLevel-1 inclusive)`.
 
@@ -184,7 +184,7 @@ git commit -m "feat(widgets): optional controlled level on PercentTokenDemo"
 
 1. **`startLevel` (`S`)**: `Slider` или `Slider` + `InputNumber`, диапазон **1–999**. Начальное значение `1`.
 2. **`emulLevel` (`L`)**: начальное `1`. **Не** синхронизировать автоматически при смене `S` (только кнопки).
-3. **«Сбросить уровень»**: `setEmulLevel(startLevel)`.
+3. **«Обновить уровень»**: `setEmulLevel(startLevel)`.
 4. **«Поднять уровень»**: `r = Math.floor(Math.random() * 100) + 1`; `ok = rollCardLevelUp(emulLevel, r)`; если `ok`, `setEmulLevel(x => x + 1)`; показать последние `r` и «успех / нет» (`Typography.Text`).
 5. **Токен:** `<PercentTokenDemo level={emulLevel} />` (без дублирования слайдера уровня).
 6. **График:** `<LevelUpExpectationChart />`.
@@ -265,7 +265,7 @@ git commit -m "docs: mention MementoRollLab in README"
 1. Открыть маршрут статьи `memento-roll` (как в `router` — обычно `/dev/memento-roll`).
 2. Сменить `S`, убедиться, что таблицы пересчитываются; при `S ≥ 100` первая таблица даёт нули.
 3. «Поднять уровень» много раз — `L` растёт только при успехе; токен обновляется от `L`.
-4. «Сбросить» — `L === S`.
+4. «Обновить уровень» — `L === S`.
 5. График без обрезания в светлой/тёмной теме.
 
 ---

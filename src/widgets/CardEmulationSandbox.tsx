@@ -77,7 +77,7 @@ export function CardEmulationSandbox() {
               Бросок r = {lastR}: {lastOk ? 'успех (+1 уровень)' : 'без улучшения'}
             </Typography.Text>
           ) : (
-            <Typography.Text type="secondary">Сделайте бросок или сброс.</Typography.Text>
+            <Typography.Text type="secondary">Сделайте бросок или обновите уровень.</Typography.Text>
           )}
         </Space>
       </Card>
