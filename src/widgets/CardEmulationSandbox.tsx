@@ -3,7 +3,11 @@ import { Button, Card, Input, InputNumber, Slider, Space, Typography } from 'ant
 import { rollCardLevelUp } from '@/memento/rollCardLevelUp'
 import { replacePercentTokensInText } from '@/memento/resolvePercentToken'
 
-const INITIAL_DRAFT = 'Урон 40%%50, база 10%%'
+const INITIAL_DRAFT = `Огненный шар
+Тактическое умение, урон по площади.
+
+Снарядов за применение: 1%% — с ростом уровня карты их становится больше.
+Охват взрыва: 150%% единиц площади на сетке (радиус и число затронутых клеток масштабируются с L).`
 
 export function CardEmulationSandbox() {
   const [startLevel, setStartLevel] = useState(1)
