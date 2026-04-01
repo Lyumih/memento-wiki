@@ -8,6 +8,7 @@ import {
   modifierSlotUnlockLevel,
   modifierUnlockedSlotCount,
 } from '@/memento/modifierSlots'
+import { modifierDemoValuesForId } from '@/memento/modifierDemoDisplay'
 import rawDb from '@/generated/db.json'
 import type { DbEntity, WikiDb } from '@/types/wikiDb'
 
@@ -15,30 +16,6 @@ const db = rawDb as WikiDb
 
 /** Подборка из демо-каталога `/db/mods` (записи с game: gen). */
 const GEN_MODIFIER_CATALOG = db.modifiers.filter((m) => m.game === 'gen' && m.type === 'modifier')
-
-/**
- * Демо-база в процентах для виджета (как в примерах дизайна: к Lm=100 ≈ ×2).
- * Не в YAML — только для песочницы; в игре значения приходят из контента.
- */
-const MODIFIER_DEMO_BASE: Record<string, { base: number; label: string }> = {
-  'slot-double-strike': { base: 40, label: 'Шанс двойного удара' },
-  'slot-triple-strike': { base: 15, label: 'Шанс тройного удара' },
-  'slot-crit-chance': { base: 30, label: 'Шанс крита' },
-  'slot-lifesteal': { base: 15, label: 'Вампиризм' },
-  'slot-cooldown-reduction': { base: 20, label: 'Снижение перезарядки' },
-  'slot-mana-cost': { base: 30, label: 'Снижение стоимости маны' },
-}
-
-function modifierDemoValues(entity: DbEntity, lm: number) {
-  const row = MODIFIER_DEMO_BASE[entity.id] ?? { base: 25, label: 'Сила эффекта (демо)' }
-  const safeLm = Math.max(1, lm)
-  return {
-    label: row.label,
-    base: row.base,
-    current: modifierScaledPercent(row.base, safeLm),
-    at100: modifierScaledPercent(row.base, 100),
-  }
-}
 
 const SLOT_INDICES = [0, 1, 2] as const
 
@@ -233,7 +210,7 @@ export function ModifierSlotsLab() {
                         Выбрано: <strong>{chosen.name}</strong>
                       </Typography.Text>
                       {(() => {
-                        const v = modifierDemoValues(chosen, lm)
+                        const v = modifierDemoValuesForId(chosen.id, lm)
                         return (
                           <Typography.Paragraph style={{ marginBottom: 0 }}>
                             <Typography.Text strong style={{ fontSize: 15 }}>
@@ -273,7 +250,7 @@ export function ModifierSlotsLab() {
                       <Typography.Text type="secondary">Выберите один из трёх:</Typography.Text>
                       <Space wrap>
                         {offer.map((entity, i) => {
-                          const v = modifierDemoValues(entity, 1)
+                          const v = modifierDemoValuesForId(entity.id, 1)
                           return (
                             <Tooltip
                               key={`${k}-${i}-${entity.id}`}
