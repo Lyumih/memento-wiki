@@ -1,0 +1,7 @@
+id: arcade-slot-crit
+game: arcade-demo
+type: modifier
+name: Крит (аркада)
+summary: Шанс критического удара как мод слота; демо-запись для arcade-demo.
+body: |
+  Используйте для проверки фильтра «игра» в UI каталога рядом с записями Gen.

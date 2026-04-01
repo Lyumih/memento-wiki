@@ -36,11 +36,12 @@ export default function DbListPage({ kind }: { kind: DbKind }) {
       <Typography.Title level={2}>{titles[kind]}</Typography.Title>
       {kind === 'modifiers' ? (
         <Typography.Paragraph type="secondary" style={{ marginBottom: 0 }}>
-          Это <strong>каталог демо-записей</strong> для вики (условные «модификаторы забега» и т.п.).{' '}
-          <strong>Встроенные модификаторы</strong> на карте умения или предмета (уровень{' '}
-          <Typography.Text code>Lm</Typography.Text>, слоты при{' '}
-          <Typography.Text code>L</Typography.Text> ≥ 75, 175, …) описаны на странице{' '}
-          <Link to="/dev/memento-modifiers">Модификаторы карт, умений и предметов</Link>.
+          Демо-каталог <strong>типов встроенных модификаторов</strong> слотов карты/умения/предмета (шансы
+          двойного/тройного/крита, вампиризм, перезарядка, мана, эффективность, площадь, длительность). У
+          каждого экземпляра свой уровень{' '}
+          <Typography.Text code>Lm</Typography.Text> и те же пороги по{' '}
+          <Typography.Text code>L</Typography.Text>, что в спеке. Подробности:{' '}
+          <Link to="/dev/memento-modifiers">Моды на карте</Link>.
         </Typography.Paragraph>
       ) : null}
       <Select

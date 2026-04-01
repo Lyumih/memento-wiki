@@ -1,0 +1,7 @@
+id: arcade-slot-double
+game: arcade-demo
+type: modifier
+name: Двойной удар (аркада)
+summary: Шанс двойного удара — встроенный мод слота; вариант записи для arcade-demo.
+body: |
+  Тот же класс эффекта, что slot-double-strike в Gen; дублирование намеренно для смешанного каталога.

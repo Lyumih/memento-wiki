@@ -24,8 +24,10 @@ export default function DbDetailPage({ kind }: { kind: DbKind }) {
       <Typography.Title level={2}>{row.name}</Typography.Title>
       {kind === 'modifiers' ? (
         <Typography.Paragraph type="secondary">
-          Запись из каталога БД (демо). Система <strong>встроенных</strong> модификаторов на карте —{' '}
-          <Link to="/dev/memento-modifiers">/dev/memento-modifiers</Link>.
+          Архетип модификатора слота (демо-каталог вики). Полное описание механики{' '}
+          <Typography.Text code>L</Typography.Text> /{' '}
+          <Typography.Text code>Lm</Typography.Text> и слотов —{' '}
+          <Link to="/dev/memento-modifiers">Моды на карте</Link>.
         </Typography.Paragraph>
       ) : null}
       <Typography.Paragraph type="secondary">
