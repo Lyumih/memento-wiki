@@ -1,4 +1,4 @@
-import { Button, Card, Divider, InputNumber, Slider, Space, Typography } from 'antd'
+import { Button, Card, Divider, InputNumber, Slider, Space, Tooltip, Typography } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 import { pickModifierOffer } from '@/memento/modifierOffer'
 import { modifierScaledPercent } from '@/memento/modifierPotency'
@@ -15,6 +15,30 @@ const db = rawDb as WikiDb
 
 /** Подборка из демо-каталога `/db/mods` (записи с game: gen). */
 const GEN_MODIFIER_CATALOG = db.modifiers.filter((m) => m.game === 'gen' && m.type === 'modifier')
+
+/**
+ * Демо-база в процентах для виджета (как в примерах дизайна: к Lm=100 ≈ ×2).
+ * Не в YAML — только для песочницы; в игре значения приходят из контента.
+ */
+const MODIFIER_DEMO_BASE: Record<string, { base: number; label: string }> = {
+  'slot-double-strike': { base: 40, label: 'Шанс двойного удара' },
+  'slot-triple-strike': { base: 15, label: 'Шанс тройного удара' },
+  'slot-crit-chance': { base: 30, label: 'Шанс крита' },
+  'slot-lifesteal': { base: 15, label: 'Вампиризм' },
+  'slot-cooldown-reduction': { base: 20, label: 'Снижение перезарядки' },
+  'slot-mana-cost': { base: 30, label: 'Снижение стоимости маны' },
+}
+
+function modifierDemoValues(entity: DbEntity, lm: number) {
+  const row = MODIFIER_DEMO_BASE[entity.id] ?? { base: 25, label: 'Сила эффекта (демо)' }
+  const safeLm = Math.max(1, lm)
+  return {
+    label: row.label,
+    base: row.base,
+    current: modifierScaledPercent(row.base, safeLm),
+    at100: modifierScaledPercent(row.base, 100),
+  }
+}
 
 const SLOT_INDICES = [0, 1, 2] as const
 
@@ -208,6 +232,21 @@ export function ModifierSlotsLab() {
                       <Typography.Text>
                         Выбрано: <strong>{chosen.name}</strong>
                       </Typography.Text>
+                      {(() => {
+                        const v = modifierDemoValues(chosen, lm)
+                        return (
+                          <Typography.Paragraph style={{ marginBottom: 0 }}>
+                            <Typography.Text strong style={{ fontSize: 15 }}>
+                              {v.label}: {v.current}%
+                            </Typography.Text>
+                            <br />
+                            <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                              Демо-база {v.base}% · при текущем Lm = {lm} · ориентир при Lm = 100:{' '}
+                              {v.at100}% (формула v1 из песочницы)
+                            </Typography.Text>
+                          </Typography.Paragraph>
+                        )
+                      })()}
                       <Space wrap align="center">
                         <Typography.Text>Lm: {lm}</Typography.Text>
                         <Slider
@@ -233,15 +272,20 @@ export function ModifierSlotsLab() {
                     <Space orientation="vertical" style={{ width: '100%', marginTop: 8 }}>
                       <Typography.Text type="secondary">Выберите один из трёх:</Typography.Text>
                       <Space wrap>
-                        {offer.map((entity, i) => (
-                          <Button
-                            key={`${k}-${i}-${entity.id}`}
-                            type="default"
-                            onClick={() => pickFromOffer(k, entity)}
-                          >
-                            {entity.name}
-                          </Button>
-                        ))}
+                        {offer.map((entity, i) => {
+                          const v = modifierDemoValues(entity, 1)
+                          return (
+                            <Tooltip
+                              key={`${k}-${i}-${entity.id}`}
+                              title={`Демо: база ${v.base}% → при Lm = 1 сейчас ${v.current}% (растёт с прокачкой Lm)`}
+                            >
+                              <Button type="default" onClick={() => pickFromOffer(k, entity)}>
+                                {entity.name}{' '}
+                                <span style={{ opacity: 0.65, fontSize: 11 }}>({v.base}%)</span>
+                              </Button>
+                            </Tooltip>
+                          )
+                        })}
                       </Space>
                     </Space>
                   ) : (
