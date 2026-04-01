@@ -33,7 +33,7 @@ npm run build
 
 Frontmatter статей: `title`, `audience` (`players` \| `dev` \| `both`), опционально `order`, `game`. Файл `index.mdx` в подпапке даёт URL каталога без суффикса `/index`.
 
-В MDX доступны виджеты `<RollLevelDemo />`, `<PercentTokenDemo />`, `<MementoRollLab />` (страница `/dev/memento-roll`: формулы, эмуляция, график и таблицы ожиданий), `<CardEmulationSandbox />` (страница `/dev/memento-card-emulation`: текст с подстановкой токенов %%, мини-эмуляция уровня) и `<MermaidDiagram definition={...} />` (через `MdxShell` или импорт из `@/widgets/...` при необходимости).
+В MDX доступны виджеты `<RollLevelDemo />`, `<PercentTokenDemo />`, `<MementoRollLab />` (страница `/dev/memento-roll`: формулы, эмуляция, график и таблицы ожиданий), `<CardEmulationSandbox />` (страница `/dev/memento-card-emulation`: текст с подстановкой токенов %%, мини-эмуляция уровня) и `<MermaidDiagram definition={...} />` (через `MdxShell` или импорт из `@/widgets/...` при необходимости). Текстовая страница `/dev/memento-modifiers` описывает встроенные модификаторы на карте (**`L`** / **`Lm`**, слоты на вехах) — без отдельного виджета в v1.
 
 ## Деплой (SPA)
 

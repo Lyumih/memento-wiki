@@ -34,6 +34,15 @@ export default function DbListPage({ kind }: { kind: DbKind }) {
   return (
     <Space orientation="vertical" size="large" style={{ width: '100%' }}>
       <Typography.Title level={2}>{titles[kind]}</Typography.Title>
+      {kind === 'modifiers' ? (
+        <Typography.Paragraph type="secondary" style={{ marginBottom: 0 }}>
+          Это <strong>каталог демо-записей</strong> для вики (условные «модификаторы забега» и т.п.).{' '}
+          <strong>Встроенные модификаторы</strong> на карте умения или предмета (уровень{' '}
+          <Typography.Text code>Lm</Typography.Text>, слоты при{' '}
+          <Typography.Text code>L</Typography.Text> ≥ 75, 175, …) описаны на странице{' '}
+          <Link to="/dev/memento-modifiers">Модификаторы карт, умений и предметов</Link>.
+        </Typography.Paragraph>
+      ) : null}
       <Select
         style={{ minWidth: 200 }}
         value={game}

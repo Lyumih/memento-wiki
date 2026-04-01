@@ -1,5 +1,5 @@
 import { Card, Typography } from 'antd'
-import { Navigate, useParams } from 'react-router-dom'
+import { Navigate, Link, useParams } from 'react-router-dom'
 import rawDb from '@/generated/db.json'
 import type { WikiDb } from '@/types/wikiDb'
 
@@ -22,6 +22,12 @@ export default function DbDetailPage({ kind }: { kind: DbKind }) {
   return (
     <Card>
       <Typography.Title level={2}>{row.name}</Typography.Title>
+      {kind === 'modifiers' ? (
+        <Typography.Paragraph type="secondary">
+          Запись из каталога БД (демо). Система <strong>встроенных</strong> модификаторов на карте —{' '}
+          <Link to="/dev/memento-modifiers">/dev/memento-modifiers</Link>.
+        </Typography.Paragraph>
+      ) : null}
       <Typography.Paragraph type="secondary">
         Игра: {row.game} · Тип: {row.type}
       </Typography.Paragraph>
