@@ -233,8 +233,12 @@ export function ModifierSlotsLab() {
                     <Space orientation="vertical" style={{ width: '100%', marginTop: 8 }}>
                       <Typography.Text type="secondary">Выберите один из трёх:</Typography.Text>
                       <Space wrap>
-                        {offer.map((entity) => (
-                          <Button key={entity.id} type="default" onClick={() => pickFromOffer(k, entity)}>
+                        {offer.map((entity, i) => (
+                          <Button
+                            key={`${k}-${i}-${entity.id}`}
+                            type="default"
+                            onClick={() => pickFromOffer(k, entity)}
+                          >
                             {entity.name}
                           </Button>
                         ))}
