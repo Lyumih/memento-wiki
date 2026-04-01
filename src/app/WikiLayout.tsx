@@ -91,7 +91,7 @@ export default function WikiLayout() {
               textDecoration: 'none',
             }}
           >
-            Memento Mori
+            Memento
           </Link>
           <div
             style={{

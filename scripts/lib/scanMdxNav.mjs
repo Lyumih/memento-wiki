@@ -43,13 +43,17 @@ export async function scanMdxNav() {
     const audience = data.audience
     const order = typeof data.order === 'number' ? data.order : 999
     const game = data.game
+    const menuTitle =
+      typeof data.menuTitle === 'string' && data.menuTitle.trim() !== ''
+        ? data.menuTitle.trim()
+        : title
 
     if (!title || !audience) {
       throw new Error(`Missing title or audience in ${relToContent}`)
     }
 
     const urlPath = pathFromContentFile(abs, contentDir)
-    const entry = { title, path: urlPath, order, ...(game ? { game } : {}) }
+    const entry = { title: menuTitle, path: urlPath, order, ...(game ? { game } : {}) }
 
     if (relToContent === 'index.mdx') {
       home = entry
@@ -69,7 +73,8 @@ export async function scanMdxNav() {
     }
   }
 
-  const sortNav = (a, b) => a.order - b.order || a.title.localeCompare(b.title, 'ru')
+  const sortNav = (a, b) =>
+    a.order - b.order || a.title.localeCompare(b.title, 'ru', { sensitivity: 'base' })
   players.sort(sortNav)
   dev.sort(sortNav)
   games.sort(sortNav)
@@ -82,7 +87,7 @@ export async function scanMdxNav() {
     db: [
       { title: 'Предметы', path: '/db/items' },
       { title: 'Умения', path: '/db/skills' },
-      { title: 'Модификаторы', path: '/db/mods' },
+      { title: 'Моды', path: '/db/mods' },
     ],
   }
 

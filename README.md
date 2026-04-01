@@ -31,7 +31,7 @@ npm run build
 | `content/games/*.mdx` | Примеры игр → `/games/...` |
 | `content/db/items/*.yaml` и т.д. | Каталог БД (см. схему в спеке, приложение C) |
 
-Frontmatter статей: `title`, `audience` (`players` \| `dev` \| `both`), опционально `order`, `game`. Файл `index.mdx` в подпапке даёт URL каталога без суффикса `/index`.
+Frontmatter статей: `title`, `audience` (`players` \| `dev` \| `both`), опционально `order`, `game`, `menuTitle` (короткая подпись для горизонтального меню в шапке; если нет — в меню попадает `title`). Файл `index.mdx` в подпапке даёт URL каталога без суффикса `/index`.
 
 В MDX доступны виджеты `<RollLevelDemo />`, `<PercentTokenDemo />`, `<MementoRollLab />` (страница `/dev/memento-roll`: формулы, эмуляция, график и таблицы ожиданий), `<CardEmulationSandbox />` (страница `/dev/memento-card-emulation`: текст с подстановкой токенов %%, мини-эмуляция уровня), `<ModifierSlotsLab />` (страница `/dev/memento-modifiers`: слоты по **`L`**, бросок **`Lm`**, демо-оффер из пула) и `<MermaidDiagram definition={...} />` (через `MdxShell` или импорт из `@/widgets/...` при необходимости).
 
