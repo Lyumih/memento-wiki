@@ -1,10 +1,6 @@
 import { Button, Card, InputNumber, Slider, Space, Typography } from 'antd'
 import { useMemo, useState } from 'react'
-import {
-  filterModifierPoolByTags,
-  type ModifierDefLike,
-  pickModifierOffer,
-} from '@/memento/modifierOffer'
+import { pickModifierOffer } from '@/memento/modifierOffer'
 import { modifierScaledPercent } from '@/memento/modifierPotency'
 import { rollModifierLevelUp } from '@/memento/rollModifierLevelUp'
 import {
@@ -12,21 +8,20 @@ import {
   modifierSlotUnlockLevel,
   modifierUnlockedSlotCount,
 } from '@/memento/modifierSlots'
+import rawDb from '@/generated/db.json'
+import type { DbEntity, WikiDb } from '@/types/wikiDb'
 
-const DEMO_POOL: ModifierDefLike[] = [
-  { id: 'crit', tags: ['melee', 'attack'] },
-  { id: 'vamp', tags: ['melee', 'attack'] },
-  { id: 'double', tags: ['melee', 'attack'] },
-  { id: 'cdr', tags: ['melee'] },
-  { id: 'mana', tags: ['spell'] },
-]
+const db = rawDb as WikiDb
+
+/** Подборка из демо-каталога `/db/mods` (записи с game: gen). */
+const GEN_MODIFIER_CATALOG = db.modifiers.filter((m) => m.game === 'gen' && m.type === 'modifier')
 
 export function ModifierSlotsLab() {
   const [cardLevel, setCardLevel] = useState(75)
   const [lm, setLm] = useState(1)
   const [lastR, setLastR] = useState<number | null>(null)
   const [lastOk, setLastOk] = useState<boolean | null>(null)
-  const [offerIds, setOfferIds] = useState<string[] | null>(null)
+  const [offerPicks, setOfferPicks] = useState<DbEntity[] | null>(null)
 
   const unlocked = modifierUnlockedSlotCount(cardLevel)
   const slotThresholds = useMemo(
@@ -34,7 +29,10 @@ export function ModifierSlotsLab() {
     [],
   )
 
-  const meleePool = useMemo(() => filterModifierPoolByTags(DEMO_POOL, ['melee']), [])
+  const catalogPoolLabel = useMemo(
+    () => GEN_MODIFIER_CATALOG.map((m) => m.name).join(' · '),
+    [],
+  )
 
   const rollLm = () => {
     const r = Math.floor(Math.random() * 100) + 1
@@ -51,8 +49,9 @@ export function ModifierSlotsLab() {
   }
 
   const genOffer = () => {
-    const picks = pickModifierOffer(meleePool, 3, (n) => Math.floor(Math.random() * n))
-    setOfferIds(picks.map((p) => p.id))
+    if (GEN_MODIFIER_CATALOG.length === 0) return
+    const picks = pickModifierOffer(GEN_MODIFIER_CATALOG, 3, (n) => Math.floor(Math.random() * n))
+    setOfferPicks(picks)
   }
 
   const doubleStrikeDemo = modifierScaledPercent(40, lm)
@@ -141,18 +140,22 @@ export function ModifierSlotsLab() {
         </Card>
 
         <Card
-          title="Оффер из пула (тег melee)"
+          title="Оффер из каталога (Gen)"
           size="small"
           style={{ flex: '1 1 280px', minWidth: 0, width: '100%', maxWidth: '100%' }}
         >
           <Space orientation="vertical" style={{ width: '100%' }}>
             <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-              Пул: {meleePool.map((p) => p.id).join(', ')}
+              Пул — записи <Typography.Text code>/db/mods</Typography.Text> с{' '}
+              <Typography.Text code>game: gen</Typography.Text>: {catalogPoolLabel}
             </Typography.Text>
-            <Button onClick={genOffer}>Сгенерировать 3 варианта</Button>
-            {offerIds ? (
+            <Button onClick={genOffer} disabled={GEN_MODIFIER_CATALOG.length === 0}>
+              Сгенерировать 3 варианта
+            </Button>
+            {offerPicks ? (
               <Typography.Text>
-                Варианты: <strong>{offerIds.join(', ')}</strong>
+                Варианты:{' '}
+                <strong>{offerPicks.map((p) => p.name).join(' · ')}</strong>
               </Typography.Text>
             ) : (
               <Typography.Text type="secondary">Нажмите кнопку — выбор с возвращением, дубликаты возможны.</Typography.Text>
