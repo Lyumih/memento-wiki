@@ -13,6 +13,13 @@ export default defineConfig({
       },
       {
         test: {
+          name: 'lib',
+          environment: 'node',
+          include: ['src/lib/**/*.test.ts'],
+        },
+      },
+      {
+        test: {
           name: 'widgets',
           environment: 'jsdom',
           include: ['src/widgets/**/*.test.{ts,tsx}'],
