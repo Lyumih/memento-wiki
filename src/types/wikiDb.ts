@@ -1,3 +1,8 @@
+export interface DbStatEntry {
+  base: number
+  perLevel: number
+}
+
 export interface DbEntity {
   id: string
   game: string
@@ -5,6 +10,8 @@ export interface DbEntity {
   name: string
   summary: string
   body?: string
+  /** Числовые параметры для подстановки {{name}} в summary/body (опционально). */
+  stats?: Record<string, DbStatEntry>
 }
 
 export interface WikiDb {

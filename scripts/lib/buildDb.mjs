@@ -9,6 +9,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.join(__dirname, '..', '..')
 const outDir = path.join(root, 'src', 'generated')
 
+const statEntrySchema = z.object({
+  base: z.number(),
+  perLevel: z.number(),
+})
+
 const entitySchema = z.object({
   id: z.string(),
   game: z.string(),
@@ -16,6 +21,7 @@ const entitySchema = z.object({
   name: z.string(),
   summary: z.string(),
   body: z.string().optional(),
+  stats: z.record(z.string(), statEntrySchema).optional(),
 })
 
 const folders = [
@@ -27,6 +33,60 @@ const folders = [
 /** fast-glob expects forward slashes in patterns (Windows path.join breaks globs). */
 function toGlobPattern(p) {
   return p.split(path.sep).join('/')
+}
+
+/** Keep placeholder scan rules in sync with src/lib/dbEntityLevelText.ts */
+function collectTemplatePlaceholders(text) {
+  const names = []
+  let i = 0
+  while (i < text.length) {
+    const start = text.indexOf('{{', i)
+    if (start === -1) break
+    const end = text.indexOf('}}', start + 2)
+    if (end === -1) {
+      throw new Error(`unclosed "{{" in template`)
+    }
+    const inner = text.slice(start + 2, end)
+    if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(inner)) {
+      throw new Error(`invalid placeholder {{${inner}}}`)
+    }
+    names.push(inner)
+    i = end + 2
+  }
+  return names
+}
+
+function validateEntityTemplates(rec, absPath) {
+  const fields = [
+    ['summary', rec.summary],
+    ...(rec.body ? [['body', rec.body]] : []),
+  ]
+  const used = new Set()
+  for (const [fieldName, value] of fields) {
+    let fieldPlaceholders
+    try {
+      fieldPlaceholders = collectTemplatePlaceholders(value)
+    } catch (e) {
+      throw new Error(`${absPath}: ${fieldName}: ${e.message}`)
+    }
+    for (const name of fieldPlaceholders) {
+      used.add(name)
+      if (!rec.stats || rec.stats[name] === undefined) {
+        throw new Error(
+          `${absPath}: placeholder {{${name}}} in ${fieldName} has no matching stats entry`,
+        )
+      }
+    }
+  }
+  if (rec.stats) {
+    for (const key of Object.keys(rec.stats)) {
+      if (!used.has(key)) {
+        console.warn(
+          `${absPath}: stats key "${key}" is never used in summary/body`,
+        )
+      }
+    }
+  }
 }
 
 export async function buildDb() {
@@ -58,10 +118,15 @@ export async function buildDb() {
       if (!parsed.success) {
         throw new Error(`${abs}: ${parsed.error.message}`)
       }
-      const rec = parsed.data
+      let rec = parsed.data
       if (rec.type !== expectedType) {
         throw new Error(`${abs}: type ${rec.type} does not match folder ${sub}`)
       }
+      if (rec.stats && Object.keys(rec.stats).length === 0) {
+        const { stats: _omit, ...rest } = rec
+        rec = rest
+      }
+      validateEntityTemplates(rec, abs)
       maps[key][rec.id] = rec
     }
 
