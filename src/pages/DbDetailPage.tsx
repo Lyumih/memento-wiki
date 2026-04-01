@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Card, Slider, Typography } from 'antd'
 import { Navigate, Link, useParams } from 'react-router-dom'
 import rawDb from '@/generated/db.json'
@@ -18,17 +18,11 @@ const routeSeg: Record<DbKind, string> = {
 function DbDetailCard({
   kind,
   row,
-  id,
 }: {
   kind: DbKind
   row: DbEntity
-  id: string
 }) {
   const [level, setLevel] = useState(LEVEL_MIN)
-
-  useEffect(() => {
-    setLevel(LEVEL_MIN)
-  }, [id])
 
   const hasStats = entityHasUsableStats(row.stats)
   const summaryRendered = useMemo(
@@ -92,5 +86,5 @@ export default function DbDetailPage({ kind }: { kind: DbKind }) {
   const row = db[kind].find((x) => x.id === id)
   if (!row) return <Navigate to={`/db/${routeSeg[kind]}`} replace />
 
-  return <DbDetailCard kind={kind} row={row} id={id} />
+  return <DbDetailCard key={id} kind={kind} row={row} />
 }
