@@ -10,6 +10,7 @@ describe('modifierSlots', () => {
     expect(modifierSlotUnlockLevel(0)).toBe(75)
     expect(modifierSlotUnlockLevel(1)).toBe(175)
     expect(modifierSlotUnlockLevel(2)).toBe(275)
+    expect(modifierSlotUnlockLevel(3)).toBe(375)
   })
 
   it('modifierUnlockedSlotCount', () => {
@@ -18,11 +19,15 @@ describe('modifierSlots', () => {
     expect(modifierUnlockedSlotCount(174)).toBe(1)
     expect(modifierUnlockedSlotCount(175)).toBe(2)
     expect(modifierUnlockedSlotCount(275)).toBe(3)
+    expect(modifierUnlockedSlotCount(374)).toBe(3)
+    expect(modifierUnlockedSlotCount(375)).toBe(4)
   })
 
   it('isModifierSlotUnlocked', () => {
     expect(isModifierSlotUnlocked(100, 0)).toBe(true)
     expect(isModifierSlotUnlocked(100, 1)).toBe(false)
     expect(isModifierSlotUnlocked(175, 1)).toBe(true)
+    expect(isModifierSlotUnlocked(374, 3)).toBe(false)
+    expect(isModifierSlotUnlocked(375, 3)).toBe(true)
   })
 })

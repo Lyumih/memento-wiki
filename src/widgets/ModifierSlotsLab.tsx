@@ -17,24 +17,33 @@ const db = rawDb as WikiDb
 /** Подборка из демо-каталога `/db/mods` (записи с game: gen). */
 const GEN_MODIFIER_CATALOG = db.modifiers.filter((m) => m.game === 'gen' && m.type === 'modifier')
 
-const SLOT_INDICES = [0, 1, 2] as const
-
-const emptyChosen: (DbEntity | null)[] = [null, null, null]
-const emptyOffers: (DbEntity[] | null)[] = [null, null, null]
+/** Пока L < 75, всё равно показываем 3 «закрытых» ряда; при росте L рядов не меньше числа открытых слотов. */
+const MIN_SLOT_ROWS = 3
 
 export function ModifierSlotsLab() {
   const [cardLevel, setCardLevel] = useState(75)
-  const [slotChosen, setSlotChosen] = useState<(DbEntity | null)[]>(() => [...emptyChosen])
-  const [slotOffer, setSlotOffer] = useState<(DbEntity[] | null)[]>(() => [...emptyOffers])
-  const [lmBySlot, setLmBySlot] = useState<number[]>(() => [1, 1, 1])
+  const [slotChosen, setSlotChosen] = useState<(DbEntity | null)[]>(() =>
+    Array.from({ length: MIN_SLOT_ROWS }, () => null),
+  )
+  const [slotOffer, setSlotOffer] = useState<(DbEntity[] | null)[]>(() =>
+    Array.from({ length: MIN_SLOT_ROWS }, () => null),
+  )
+  const [lmBySlot, setLmBySlot] = useState<number[]>(() => Array.from({ length: MIN_SLOT_ROWS }, () => 1))
   const [lastLmRoll, setLastLmRoll] = useState<{ slotIndex: number; r: number; ok: boolean } | null>(
     null,
   )
 
   const unlocked = modifierUnlockedSlotCount(cardLevel)
+  const displaySlotCount = Math.max(MIN_SLOT_ROWS, unlocked)
+
+  const slotIndices = useMemo(
+    () => Array.from({ length: displaySlotCount }, (_, k) => k),
+    [displaySlotCount],
+  )
+
   const slotThresholds = useMemo(
-    () => SLOT_INDICES.map((k) => ({ k, need: modifierSlotUnlockLevel(k) })),
-    [],
+    () => slotIndices.map((k) => ({ k, need: modifierSlotUnlockLevel(k) })),
+    [slotIndices],
   )
 
   const catalogPoolLabel = useMemo(
@@ -43,14 +52,21 @@ export function ModifierSlotsLab() {
   )
 
   useEffect(() => {
+    const need = Math.max(MIN_SLOT_ROWS, modifierUnlockedSlotCount(cardLevel))
     setSlotChosen((prev) =>
-      SLOT_INDICES.map((k) => (isModifierSlotUnlocked(cardLevel, k) ? prev[k] : null)),
+      Array.from({ length: need }, (_, k) =>
+        isModifierSlotUnlocked(cardLevel, k) ? (prev[k] ?? null) : null,
+      ),
     )
     setSlotOffer((prev) =>
-      SLOT_INDICES.map((k) => (isModifierSlotUnlocked(cardLevel, k) ? prev[k] : null)),
+      Array.from({ length: need }, (_, k) =>
+        isModifierSlotUnlocked(cardLevel, k) ? (prev[k] ?? null) : null,
+      ),
     )
     setLmBySlot((prev) =>
-      SLOT_INDICES.map((k) => (isModifierSlotUnlocked(cardLevel, k) ? prev[k] : 1)),
+      Array.from({ length: need }, (_, k) =>
+        isModifierSlotUnlocked(cardLevel, k) ? (prev[k] ?? 1) : 1,
+      ),
     )
   }, [cardLevel])
 
@@ -154,14 +170,26 @@ export function ModifierSlotsLab() {
             <Typography.Text strong>L: {cardLevel}</Typography.Text>
             <Slider
               min={1}
-              max={300}
+              max={999}
               value={cardLevel}
               onChange={setCardLevel}
-              marks={{ 1: '1', 75: '75', 175: '175', 275: '275', 300: '300' }}
+              marks={{
+                1: '1',
+                75: '75',
+                175: '175',
+                275: '275',
+                375: '375',
+                475: '475',
+                575: '575',
+                999: '999',
+              }}
             />
             <Typography.Text>
-              Открыто слотов: <strong>{unlocked}</strong> из 3. Следующий слот открывается при{' '}
-              <Typography.Text code>L</Typography.Text> ≥ 175, затем ≥ 275 (первый — при ≥ 75).
+              Открыто слотов: <strong>{unlocked}</strong>. Порог слота <strong>n</strong>:{' '}
+              <Typography.Text code>L</Typography.Text> ≥ <Typography.Text code>75 + 100·(n − 1)</Typography.Text>{' '}
+              (1-й при 75, 2-й при 175, 3-й при 275, 4-й при 375…). Ниже —{' '}
+              <strong>{displaySlotCount}</strong> ряд(а/ов): не меньше трёх до порога 75, затем не меньше числа
+              уже открытых слотов.
             </Typography.Text>
             <Typography.Text type="secondary" style={{ fontSize: 12 }}>
               Пороги:{' '}
@@ -185,7 +213,7 @@ export function ModifierSlotsLab() {
           style={{ flex: '1 1 360px', minWidth: 0, width: '100%', maxWidth: '100%' }}
         >
           <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
-            {SLOT_INDICES.map((k) => {
+            {slotIndices.map((k) => {
               const need = modifierSlotUnlockLevel(k)
               const open = isModifierSlotUnlocked(cardLevel, k)
               const chosen = slotChosen[k]
