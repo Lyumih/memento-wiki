@@ -1,7 +1,10 @@
-import { Card, Typography } from 'antd'
+import { useEffect, useMemo, useState } from 'react'
+import { Card, Slider, Typography } from 'antd'
 import { Navigate, Link, useParams } from 'react-router-dom'
 import rawDb from '@/generated/db.json'
-import type { WikiDb } from '@/types/wikiDb'
+import type { DbEntity, WikiDb } from '@/types/wikiDb'
+import { LEVEL_MAX, LEVEL_MIN } from '@/constants/dbLevel'
+import { entityHasUsableStats, interpolateDbText } from '@/lib/dbEntityLevelText'
 
 const db = rawDb as WikiDb
 import type { DbKind } from './DbListPage'
@@ -12,12 +15,31 @@ const routeSeg: Record<DbKind, string> = {
   modifiers: 'mods',
 }
 
-export default function DbDetailPage({ kind }: { kind: DbKind }) {
-  const { id } = useParams<{ id: string }>()
-  if (!id) return <Navigate to={`/db/${routeSeg[kind]}`} replace />
+function DbDetailCard({
+  kind,
+  row,
+  id,
+}: {
+  kind: DbKind
+  row: DbEntity
+  id: string
+}) {
+  const [level, setLevel] = useState(LEVEL_MIN)
 
-  const row = db[kind].find((x) => x.id === id)
-  if (!row) return <Navigate to={`/db/${routeSeg[kind]}`} replace />
+  useEffect(() => {
+    setLevel(LEVEL_MIN)
+  }, [id])
+
+  const hasStats = entityHasUsableStats(row.stats)
+  const summaryRendered = useMemo(
+    () => interpolateDbText(row.summary, row.stats, level),
+    [row.summary, row.stats, level],
+  )
+  const bodyRendered = useMemo(
+    () =>
+      row.body ? interpolateDbText(row.body, row.stats, level) : undefined,
+    [row.body, row.stats, level],
+  )
 
   return (
     <Card>
@@ -33,12 +55,42 @@ export default function DbDetailPage({ kind }: { kind: DbKind }) {
       <Typography.Paragraph type="secondary">
         Игра: {row.game} · Тип: {row.type}
       </Typography.Paragraph>
-      <Typography.Paragraph>{row.summary}</Typography.Paragraph>
-      {row.body ? (
+      <div style={{ marginBottom: 16 }}>
+        <Typography.Text strong>Уровень: {level}</Typography.Text>
+        <Slider
+          min={LEVEL_MIN}
+          max={LEVEL_MAX}
+          step={1}
+          value={level}
+          onChange={setLevel}
+          disabled={!hasStats}
+          style={{ marginTop: 8 }}
+          aria-valuemin={LEVEL_MIN}
+          aria-valuemax={LEVEL_MAX}
+          aria-valuenow={level}
+        />
+        {!hasStats ? (
+          <Typography.Paragraph type="secondary" style={{ marginBottom: 0 }}>
+            Для этой записи уровень не влияет на описание.
+          </Typography.Paragraph>
+        ) : null}
+      </div>
+      <Typography.Paragraph>{summaryRendered}</Typography.Paragraph>
+      {bodyRendered !== undefined ? (
         <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
-          {row.body}
+          {bodyRendered}
         </Typography.Paragraph>
       ) : null}
     </Card>
   )
+}
+
+export default function DbDetailPage({ kind }: { kind: DbKind }) {
+  const { id } = useParams<{ id: string }>()
+  if (!id) return <Navigate to={`/db/${routeSeg[kind]}`} replace />
+
+  const row = db[kind].find((x) => x.id === id)
+  if (!row) return <Navigate to={`/db/${routeSeg[kind]}`} replace />
+
+  return <DbDetailCard kind={kind} row={row} id={id} />
 }
