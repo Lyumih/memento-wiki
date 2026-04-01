@@ -1,4 +1,4 @@
-import { Card, List, Select, Space, Typography } from 'antd'
+import { Card, Empty, Flex, Select, Space, Typography } from 'antd'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import rawDb from '@/generated/db.json'
@@ -44,16 +44,18 @@ export default function DbListPage({ kind }: { kind: DbKind }) {
         ]}
       />
       <Card size="small">
-        <List
-          dataSource={filtered}
-          locale={{ emptyText: 'Нет записей' }}
-          renderItem={(item) => (
-            <List.Item>
-              <Link to={`${base}/${item.id}`}>{item.name}</Link>
-              <Typography.Text type="secondary"> — {item.summary}</Typography.Text>
-            </List.Item>
-          )}
-        />
+        {filtered.length === 0 ? (
+          <Empty description="Нет записей" />
+        ) : (
+          <Flex vertical gap="small">
+            {filtered.map((item) => (
+              <div key={item.id}>
+                <Link to={`${base}/${item.id}`}>{item.name}</Link>
+                <Typography.Text type="secondary"> — {item.summary}</Typography.Text>
+              </div>
+            ))}
+          </Flex>
+        )}
       </Card>
     </Space>
   )
