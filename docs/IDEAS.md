@@ -25,5 +25,5 @@
 
 ## Сделано / перенесено в планы
 
-- **2026-04-02 — Специализация (классы Memento):** спека `docs/superpowers/specs/2026-04-02-memento-specialization-design.md`, страница вики [/dev/memento-specialization](/dev/memento-specialization). План реализации кода и `SpecializationLab` — по `writing-plans`.
+- **2026-04-02 — Специализация (классы Memento):** спека `docs/superpowers/specs/2026-04-02-memento-specialization-design.md`, план `docs/superpowers/plans/2026-04-02-memento-specialization.md`, страница [/dev/memento-specialization](/dev/memento-specialization) с `SpecializationLab`; модули `src/memento/mementoSpecialization.ts`, `rollCardLevelUpWithSpecialization.ts`, расширение `modifierSlots` / `cardLevelUpStats`.
 
