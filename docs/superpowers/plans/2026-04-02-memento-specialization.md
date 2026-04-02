@@ -25,7 +25,6 @@
 | `src/widgets/SpecializationLab.tsx` | Выбор пресета, `L`, таблица эффективных параметров, `P` база vs с бонусом, пороги слотов 0–2 |
 | `src/mdx/MdxShell.tsx` | Регистрация `SpecializationLab` |
 | `content/dev/memento-specialization.mdx` | `<SpecializationLab />` под вводным текстом |
-| `docs/superpowers/specs/2026-04-02-memento-specialization-design.md` | §10: ссылка на этот план |
 
 **Вне объёма:** персистентность, gen-sp, изменение `ModifierSlotsLab` (по желанию позже передать `eff` вручную — не в этом плане).
 
