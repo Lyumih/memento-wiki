@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { rollCardLevelUp } from './rollCardLevelUp'
 import {
   cardLevelUpSuccessProbability,
+  cardLevelUpSuccessProbabilityWithBonus,
   expectedRollsForOneSuccess,
   expectedRollsToReachLevel,
 } from './cardLevelUpStats'
@@ -37,6 +38,20 @@ describe('cardLevelUpStats', () => {
   it('L = 200 matches high-level rule (same as L > 100)', () => {
     expect(cardLevelUpSuccessProbability(200)).toBe(0.01)
     expect(expectedRollsForOneSuccess(200)).toBe(100)
+  })
+
+  it('WithBonus(75, 1) equals P(max(1, L - b))', () => {
+    const L = 75
+    const b = 1
+    expect(cardLevelUpSuccessProbabilityWithBonus(L, b)).toBe(
+      cardLevelUpSuccessProbability(Math.max(1, L - b)),
+    )
+  })
+
+  it('WithBonus(101, 5) equals P(101) — bonus ignored above 100', () => {
+    expect(cardLevelUpSuccessProbabilityWithBonus(101, 5)).toBe(
+      cardLevelUpSuccessProbability(101),
+    )
   })
 
   it('empirical success rate matches P(L) for sample levels', () => {

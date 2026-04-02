@@ -23,3 +23,21 @@ export function expectedRollsToReachLevel(startLevel: number, targetLevel: numbe
   }
   return sum
 }
+
+/**
+ * Вероятность успеха одного броска с levelUpBonusSteps (§3.1 спеки specialization).
+ * При L > 100 бонус не применяется.
+ */
+export function cardLevelUpSuccessProbabilityWithBonus(
+  level: number,
+  levelUpBonusSteps: number,
+): number {
+  if (!Number.isInteger(levelUpBonusSteps) || levelUpBonusSteps < 0) {
+    throw new RangeError('levelUpBonusSteps must be a non-negative integer')
+  }
+  if (level > 100) {
+    return cardLevelUpSuccessProbability(level)
+  }
+  const L_eff = Math.max(1, level - levelUpBonusSteps)
+  return cardLevelUpSuccessProbability(L_eff)
+}
