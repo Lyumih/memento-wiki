@@ -6,6 +6,7 @@ import { MementoRollLab } from '@/widgets/MementoRollLab'
 import { ModifierSlotsLab } from '@/widgets/ModifierSlotsLab'
 import { PercentTokenDemo } from '@/widgets/PercentTokenDemo'
 import { RollLevelDemo } from '@/widgets/RollLevelDemo'
+import { SpecializationLab } from '@/widgets/SpecializationLab'
 
 const components = {
   CardEmulationSandbox,
@@ -14,6 +15,7 @@ const components = {
   ModifierSlotsLab,
   RollLevelDemo,
   PercentTokenDemo,
+  SpecializationLab,
 }
 
 export function MdxShell({ children }: { children: ReactNode }) {
