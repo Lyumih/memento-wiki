@@ -75,7 +75,7 @@ export function SpecializationLab() {
       <Alert
         type="info"
         showIcon
-        message="Как читать эту страницу"
+        title="Как читать эту страницу"
         description={
           <span>
             Здесь нет «готовых классов из игры» — только <strong>иллюстративные пресеты</strong> из дизайн-спеки:
