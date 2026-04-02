@@ -453,8 +453,6 @@ git commit -m "feat(wiki): SpecializationLab on memento-specialization page"
 
 ---
 
----
-
 ## Проверка плана по спеке
 
 | Раздел спеки | Покрытие |
