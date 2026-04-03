@@ -5,6 +5,10 @@ import { scanMdxNav, collectMdxBodiesForLinks } from './lib/scanMdxNav.mjs'
 import { buildDb } from './lib/buildDb.mjs'
 import { checkLinks } from './lib/checkLinks.mjs'
 import { pathFromContentFile } from './lib/pathFromContentMdx.mjs'
+import {
+  buildWikiMarkdownBundle,
+  JSON_PUBLIC_NAME,
+} from './lib/buildWikiMarkdownBundle.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.join(__dirname, '..')
@@ -45,7 +49,17 @@ async function main() {
   if (!fs.existsSync(path.join(root, 'src', 'generated', 'db.json'))) {
     throw new Error('db.json missing after buildDb')
   }
-  console.log('prebuild: nav.json + db.json OK')
+
+  const dbPath = path.join(root, 'src', 'generated', 'db.json')
+  buildWikiMarkdownBundle({
+    root,
+    contentDir,
+    mdxAbsPaths: mdxFiles,
+    db,
+  })
+  fs.copyFileSync(dbPath, path.join(root, 'public', JSON_PUBLIC_NAME))
+
+  console.log('prebuild: nav.json + db.json + wiki export OK')
 }
 
 main().catch((e) => {

@@ -16,10 +16,19 @@ npm run dev
 
 Перед `dev` и `build` автоматически выполняется `scripts/prebuild.mjs`: генерируются `src/generated/nav.json` и `src/generated/db.json` (файлы в `.gitignore`). Без этого шага импорты JSON в приложении не соберутся.
 
+Тот же prebuild дополнительно создаёт **`memento-wiki-export.md`** (консолидированный текст статей для ИИ и IDE) и копию каталога БД в **`public/memento-db.json`**. Копии лежат в `public/` и в `.gitignore`, чтобы не коммитить снимки; они появляются локально и в CI после `predev` / `prebuild`.
+
 ```bash
 npm run test
+npm run test:export
 npm run build
 ```
+
+## Экспорт для ИИ и скачивание
+
+На сайте страница **`/export`**: предпросмотр собранного Markdown и ссылки на скачивание `memento-wiki-export.md` и `memento-db.json`. В шапке есть пункт «Экспорт».
+
+Статические файлы из `public/` (в том числе `.md` и `.json`) при деплое на Vercel обычно отдаются напрямую, до SPA-fallback. После выкладки имеет смысл проверить, что `GET /memento-wiki-export.md` возвращает текст, а не `index.html`.
 
 ## Контент
 

@@ -112,6 +112,18 @@ export default function WikiLayout() {
               }}
             />
           </div>
+          <Link
+            to="/export"
+            style={{
+              flexShrink: 0,
+              whiteSpace: 'nowrap',
+              color: 'inherit',
+              textDecoration: 'none',
+              fontSize: 14,
+            }}
+          >
+            Экспорт
+          </Link>
         </div>
       </Header>
       <Content style={{ padding: 24, maxWidth: 960, margin: '0 auto', width: '100%' }}>

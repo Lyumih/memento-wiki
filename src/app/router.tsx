@@ -6,6 +6,7 @@ import WikiLayout from './WikiLayout'
 import DbListPage from '@/pages/DbListPage'
 import DbDetailPage from '@/pages/DbDetailPage'
 import NotFoundPage from '@/pages/NotFoundPage'
+import WikiExportPage from '@/pages/WikiExportPage'
 import { MdxShell } from '@/mdx/MdxShell'
 import { globKeyToRelMdx, pathFromContentMdx } from '@/lib/contentPaths'
 
@@ -66,6 +67,7 @@ export function AppRouter() {
             { path: 'db/items/:id', element: <DbDetailPage kind="items" /> },
             { path: 'db/skills/:id', element: <DbDetailPage kind="skills" /> },
             { path: 'db/mods/:id', element: <DbDetailPage kind="modifiers" /> },
+            { path: 'export', element: <WikiExportPage /> },
             { path: '*', element: <NotFoundPage /> },
           ],
         },
