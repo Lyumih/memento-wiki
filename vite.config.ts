@@ -16,6 +16,8 @@ export default defineConfig({
       ...mdx({
         providerImportSource: '@mdx-js/react',
         remarkPlugins: [remarkFrontmatter],
+        // Only .mdx is wiki content; plain .md (e.g. generated export) must use ?raw, not MDX compile.
+        include: /\.mdx$/,
       }),
     },
     react(),
