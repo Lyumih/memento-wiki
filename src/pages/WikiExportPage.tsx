@@ -1,4 +1,4 @@
-import { Alert, Space, Typography } from 'antd'
+import { Space, Typography } from 'antd'
 import rehypeSlug from 'rehype-slug'
 import { useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
@@ -18,13 +18,6 @@ export default function WikiExportPage() {
         Один файл со всеми статьями (Markdown) и полный снимок каталога БД (JSON). Удобно для ИИ,
         архива и предпросмотра в IDE.
       </Typography.Paragraph>
-      <Alert
-        type="info"
-        showIcon
-        message="Большие файлы"
-        description="Предпросмотр ниже может загружаться заметно долго на слабых устройствах. При необходимости скачайте `.md` и откройте локально."
-        style={{ marginBottom: 16 }}
-      />
       <Space wrap size="middle" style={{ marginBottom: 24 }}>
         <Typography.Link href={MD_HREF} download="memento-wiki-export.md" strong>
           Скачать memento-wiki-export.md
